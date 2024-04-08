@@ -24,7 +24,8 @@
       if(isset($_POST['partSearch']) && !empty($_POST['partSearch']))
       {
         //return button
-        echo "<p><a href='inventory.php'><button>Return</button></a></p>";
+        echo "<p><a href='inventory.php'><button name='Return'>Return</button></a></p>";
+
         $partSearch = $_POST['partSearch'];
 
         //find the parts with similar desc or number
@@ -40,7 +41,7 @@
         {
           //table to display the filtered parts
           echo "<table border=1>";
-          echo "<tr><th>Number</th><th>Picture</th><th>Description</th><th>Price</th><th>Weight</th><th>Quantity</th><tr>";
+          echo "<tr><th>Number</th><th>Picture</th><th>Description</th><th>Price</th><th>Weight</th><th>Quantity</th><th>Add Quantitiy</th><tr>";
           while($rows = $specificPart->fetch(PDO::FETCH_ASSOC))
           {
             echo "<tr>";
@@ -61,6 +62,16 @@
             $specPartQuan->execute([':partNumber' => $rows['number']]);
             $spQuan = $specPartQuan->fetch(PDO::FETCH_ASSOC);
             echo "<td>" . $spQuan['quan_in_inv'] . "</td>";
+
+            //input box and submit button
+            echo "<td>";
+            echo "<form method='POST' action=''>";
+            echo "<input type='hidden' name='partNumber' value='" . $rows['number'] . "'>";
+            echo "<input type='number' name='addQuan' value='0' min='0'>";
+            echo "<input type='submit' name='updateQuantity' value='Update'>";
+            echo "</form>";
+            echo "</td>";
+
             echo "</tr>";
           }
           echo "</table>";
@@ -74,11 +85,10 @@
 
         //display the parts, their info, and their quantity
         echo "<table border=1>";
-        echo "<tr><th>Number</th><th>Picture</th><th>Description</th><th>Price</th><th>Weight</th><th>Quantity</th><tr>";
+        echo "<tr><th>Number</th><th>Picture</th><th>Description</th><th>Price</th><th>Weight</th><th>Quantity</th><th>Add Quantity</th><tr>";
 
         while($rows = $partsTable->fetch(PDO::FETCH_ASSOC))
         {
-          $row = $partsQuantity->fetch(PDO::FETCH_ASSOC);
           echo "<tr>";
           echo "<td>" . $rows['number'] . "</td>";
           echo "<td>"; //picture
@@ -91,10 +101,35 @@
           echo "<td>" . $rows['description'] . "</td>";
           echo "<td>" . $rows['price'] . "</td>";
           echo "<td>" . $rows['weight'] . "</td>";
-          echo "<td>" . $row['quan_in_inv'] . "</td>";
+
+          //get quantitiy
+          $currQuan = $pdo2->prepare("SELECT quan_in_inv FROM Inventory WHERE inv_id = :partNumber;");
+          $currQuan->execute([':partNumber' => $rows['number']]);
+          $cQuan = $currQuan->fetch(PDO::FETCH_ASSOC);
+          echo "<td>" . $cQuan['quan_in_inv'] . "</td>";
+
+          //input box and submit button
+          echo "<td>";
+          echo "<form method='POST' action=''>";
+          echo "<input type='hidden' name='partNumber' value='" . $rows['number'] . "'>";
+          echo "<input type='number' name='addQuan' value='0' min='0'>";
+          echo "<input type='submit' name='updateQuantity' value='Update'>";
+          echo "</form>";
+          echo "</td>";
+
           echo "</tr>";
         }
         echo "</table>";
+
+        //update quantities if a number was inputed
+        $partNum = $_POST['partNumber'];
+        $quanToAdd = $_POST['addQuan'];
+
+        if($quanToAdd != 0)
+        {
+          $updateQuan = $pdo2->prepare("UPDATE Inventory SET quan_in_inv=quan_in_inv+:quanToAdd WHERE inv_id=:partNum;");
+          $updateQuan->execute([':quanToAdd' => $quanToAdd, ':partNum' => $partNum]);
+        }
       }
     }
     catch(PDOexception $e) {
