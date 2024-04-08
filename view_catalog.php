@@ -180,7 +180,7 @@
                     // Form for adding to cart
                     echo "<div class=\"det\">";
                     echo "<!-- Form for adding a quantity to cart -->";
-                    echo "<form method='POST' action='" . $_SERVER['PHP_SELF'] . "'>";
+                    echo "<form method='POST' action=''>";
                     echo "<label for='add_cart'></label>";
                     echo "<input type='text' name='add_cart' size='3'>";
                     echo "<input type='submit' value='Add to Cart'>";
