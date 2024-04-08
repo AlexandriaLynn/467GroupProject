@@ -3,11 +3,10 @@
   <body>
    <?php
 
-    include("secrets.php"); //this is another php, that has a $username and $password to connect to the db
+    include("secrets.php"); //this is another php, that has a $username, $password, and $dbname to connect to the db
+                            //$username = zid, $password = yearMonDay, $dbname = zid
 
     try{
-      $dbname = "z1979706"; //change the zID to your own zID
-
       $dsn1 = "mysql:host=blitz.cs.niu.edu;dbname=csci467";
       $dsn2 = "mysql:host=courses;dbname=$dbname";
       $pdo1 = new PDO($dsn1, "student", "student");
