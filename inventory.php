@@ -1,10 +1,33 @@
 <html>
- <head><title>Inventory</title></head>
+ <head>
+  <title>Inventory</title>
+  <style>
+
+   table
+   {
+     border-collapse: collapse;
+     width: 100%;
+   }
+
+   th, td
+   {
+     padding: 8px;
+     text-align: left;
+     border-bottom: 1px solid #ddd;
+   }
+
+   tr:nth-child(even)
+   {
+     background-color: #f2f2f2;
+   }
+
+  </style>
+ </head>
   <body>
    <?php
 
     include("secrets.php"); //this is another php, that has a $username, $password, and $dbname to connect to the db
-                            //$username = zid, $password = yearMonDay, $dbname = zid
+                                                            //zid,       bday,          zid
 
     try{
       $dsn1 = "mysql:host=blitz.cs.niu.edu;dbname=csci467";
@@ -39,8 +62,8 @@
         else
         {
           //table to display the filtered parts
-          echo "<table border=1>";
-          echo "<tr><th>Number</th><th>Picture</th><th>Description</th><th>Price</th><th>Weight</th><th>Quantity</th><th>Add Quantitiy</th><tr>";
+          echo "<table>";
+          echo "<tr><th>Number</th><th>Picture</th><th>Description</th><th>Price</th><th>Weight</th><th>Quantity</th><th>Add Quantity</th></tr>";
           while($rows = $specificPart->fetch(PDO::FETCH_ASSOC))
           {
             echo "<tr>";
@@ -57,7 +80,7 @@
             echo "<td>" . $rows['weight'] . "</td>";
 
             //get the part quantity from inventory table in 2nd db
-            $specPartQuan = $pdo2->prepare("SELECT quan_in_inv FROM Inventory WHERE inv_id = :partNumber;");
+            $specPartQuan = $pdo2->prepare("SELECT quan_in_inv FROM PInventory WHERE inv_id = :partNumber;");
             $specPartQuan->execute([':partNumber' => $rows['number']]);
             $spQuan = $specPartQuan->fetch(PDO::FETCH_ASSOC);
             echo "<td>" . $spQuan['quan_in_inv'] . "</td>";
@@ -78,12 +101,14 @@
       }
       else //the search bar is empty / there is no filter
       {
+        $changed = 0;
+
         //grab the parts info and quantities
         $partsTable = $pdo1->query('SELECT * FROM parts;');
-        $partsQuantity = $pdo2->query('SELECT * FROM Inventory;');
+        $partsQuantity = $pdo2->query('SELECT * FROM PInventory;');
 
         //display the parts, their info, and their quantity
-        echo "<table border=1>";
+        echo "<table>";
         echo "<tr><th>Number</th><th>Picture</th><th>Description</th><th>Price</th><th>Weight</th><th>Quantity</th><th>Add Quantity</th><tr>";
 
         while($rows = $partsTable->fetch(PDO::FETCH_ASSOC))
@@ -101,8 +126,23 @@
           echo "<td>" . $rows['price'] . "</td>";
           echo "<td>" . $rows['weight'] . "</td>";
 
+          //makes sure the quanitity is updated only once
+          if(isset($_POST['updateQuantity']) && $changed == 0)
+          {
+            //update quantities if a number was inputed
+            $partNum = $_POST['partNumber'];
+            $quanToAdd = $_POST['addQuan'];
+
+            if($quanToAdd != 0)
+            {
+              $updateQuan = $pdo2->prepare("UPDATE PInventory SET quan_in_inv=quan_in_inv+:quanToAdd WHERE inv_id=:partNum;");
+              $updateQuan->execute([':quanToAdd' => $quanToAdd, ':partNum' => $partNum]);
+              $changed = 1;
+            }
+          }
+
           //get quantitiy
-          $currQuan = $pdo2->prepare("SELECT quan_in_inv FROM Inventory WHERE inv_id = :partNumber;");
+          $currQuan = $pdo2->prepare("SELECT quan_in_inv FROM PInventory WHERE inv_id = :partNumber;");
           $currQuan->execute([':partNumber' => $rows['number']]);
           $cQuan = $currQuan->fetch(PDO::FETCH_ASSOC);
           echo "<td>" . $cQuan['quan_in_inv'] . "</td>";
@@ -119,16 +159,6 @@
           echo "</tr>";
         }
         echo "</table>";
-
-        //update quantities if a number was inputed
-        $partNum = $_POST['partNumber'];
-        $quanToAdd = $_POST['addQuan'];
-
-        if($quanToAdd != 0)
-        {
-          $updateQuan = $pdo2->prepare("UPDATE Inventory SET quan_in_inv=quan_in_inv+:quanToAdd WHERE inv_id=:partNum;");
-          $updateQuan->execute([':quanToAdd' => $quanToAdd, ':partNum' => $partNum]);
-        }
       }
     }
     catch(PDOexception $e) {
