@@ -1,22 +1,22 @@
-CREATE TABLE Admin(
+CREATE TABLE PAdmin(
     admin_id varchar(5) primary key
 );
 
-CREATE TABLE Employee(
+CREATE TABLE PEmployee(
     emp_id varchar(5) primary key
 );
 
-CREATE TABLE Inventory(
+CREATE TABLE PInventory(
     inv_id int primary key,
     quan_in_inv int
 );
 
-CREATE TABLE ShipAndHand(
+CREATE TABLE PShipAndHand(
    weight_bracket int primary key,
    price float(6,2)
 );
 
-CREATE TABLE Orders(
+CREATE TABLE POrders(
    order_num BIGINT(10) primary key,
    date_placed date not null,
    cust_name varchar(50) not null,
@@ -28,14 +28,14 @@ CREATE TABLE Orders(
    cc_num bigint(16) not null,
    cc_exp varchar(5) not null,
    weight_bracket int,
-   foreign key(weight_bracket) references ShipAndHand(weight_bracket)
+   foreign key(weight_bracket) references PShipAndHand(weight_bracket)
 );
 
-CREATE TABLE ProdInOrder(
+CREATE TABLE PProdInOrder(
     inv_id int,
     order_num bigint(10),
     quan_in_order int,
     primary key(inv_id, order_num),
-    foreign key(inv_id) references Inventory(inv_id),
-    foreign key(order_num) references Orders(order_num)
+    foreign key(inv_id) references PInventory(inv_id),
+    foreign key(order_num) references POrders(order_num)
 );
