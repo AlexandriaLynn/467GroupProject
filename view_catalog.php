@@ -135,7 +135,7 @@
     <ul class="menu">
     <!-- Nav to go to shopping cart of product list/view catalog-->
         <li><a href='view_catalog.php'>Product List</a></li>
-        <li><a>Shopping Cart</a></li>
+        <li><a href='shoppingcart.php'>Shopping Cart</a></li>
         <div class="navbar-right"><li><a href='login.php'>Employee or Admin? Log in.</a></li></div>
 
     <!--Textbox to search for part description. If a value is submitted, it takes you to a separate php file with the search results-->
@@ -202,16 +202,36 @@
             
                     // Form for adding to cart; displaying with the detail css style 
                     echo "<div class=\"det\">";
-                    echo "<!-- Form for adding a quantity to cart -->";
+                    //Form for adding a quantity to cart
                     echo "<form method='POST' action=''>";
-                    echo "<label for='add_cart'></label>";
+                    echo "<input type='hidden' name='part_number' value='" . $row['number'] . "'>";
+                    echo "<label for='add_cart'>Enter Quantity: </label>";
                     echo "<input type='text' name='add_cart' size='3'>";
                     echo "<input type='submit' value='Add to Cart'>";
                     echo "</form>";
                     echo "</div>";
 
-                    echo "</div>"; // close the card div 
-                }
+                    // check if form is not empty and ensure that form details are only being displayed on the specified part submission
+                    if (!empty($_POST["add_cart"]) && $_POST['part_number'] == $row['number']) 
+                    {
+                        $quan_select = $_POST['add_cart'];
+                        
+                        // check the quantity in inventory column 
+                        $cur_quan = (int)$spQuan['quan_in_inv'];
+
+                        // if the current quantity is less than the selected quantity, display the message
+                        if ($cur_quan < $quan_select) 
+                        {
+                            echo "<div class=\"det\">Not enough in stock.</div>";
+                        }
+                        else 
+                        {
+                            // add code for adding to database and shopping cart page. 
+                        }
+                    }
+
+                    echo "</div>"; // close card
+                }            
             } 
             catch (PDOException $e) 
             {
