@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<html>
 <head>
     <title>Parts Catalog</title>
     <style>
@@ -122,7 +123,6 @@
             float: right;
             margin-top: 10px;
         }
-
     </style>
 </head>
 <body>
@@ -131,53 +131,76 @@
     <h1 class="products-h">Car Parts</h1>
     <nav class="navbar">
 
+    <!--navbar menu items-->
     <ul class="menu">
     <!-- Nav to go to shopping cart of product list/view catalog-->
-    <li><a href='view_catalog.php'>Product List</a></li>
-    <li><a>Shopping Cart</a></li>
-    <div class="navbar-right"><li><a href='login.php'>Employee or Admin? Log in.</a></li></div>
+        <li><a href='view_catalog.php'>Product List</a></li>
+        <li><a>Shopping Cart</a></li>
+        <div class="navbar-right"><li><a href='login.php'>Employee or Admin? Log in.</a></li></div>
 
     <!--Textbox to search for part description. If a value is submitted, it takes you to a separate php file with the search results-->
-    <div class="navbar-centered">
-        <li>
-        <form method="POST" action="search_catalog.php">
-        <label for="search_part" class="topnav-search">Search by Part Description</label>
-        <input type ="text" name="search_part">
-        <input type="submit" value="Search"/>
-        </form>
-    </li>
-    </div>
+        <div class="navbar-centered">
+            <li>
+                <form method="POST" action="search_catalog.php">
+                    <label for="search_part" class="topnav-search">Search by Part Description</label>
+                    <input type ="text" name="search_part">
+                    <input type="submit" value="Search"/>
+                </form>
+            </li>
+        </div>
     </ul>
     </nav>
 
-  </div>
-
 <section class="sec">
-        <div class="products"> 
-        
-            <?php
-            try {
+    <div class="products"> 
+        <?php
+
+            include("secrets.php");
+
+            try 
+            {
+                // connect to ege database and mariadb 
                 $dsn = "mysql:host=blitz.cs.niu.edu;dbname=csci467";
+                $dsn2 = "mysql:host=courses;dbname=$dbname";
                 $pdo = new PDO($dsn, 'student', 'student');
+                $pdo2 = new PDO($dsn2, $username, $password);
             
+                // sql to grab part details
                 $sql = "SELECT * FROM parts";
                 $result = $pdo->query($sql);
             
-                while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
+                // sql to grab part quantity/inventory amount
+                $specPartQuan = $pdo2->prepare("SELECT quan_in_inv FROM PInventory WHERE inv_id = :part_number");
+
+                // grab part info and display
+                while ($row = $result->fetch(PDO::FETCH_ASSOC)) 
+                {
+                    // card/grid & image formatting for products
                     echo "<div class=\"card\">";
                     echo "<div class=\"img\">";
-                    if (isset($row['pictureURL'])) {
-                        echo "<img src='" . $row['pictureURL'] . "' alt='Picture'>";
-                    }
-                    echo "</div>";
+
+                    // display image
+                    echo "<img src='" . $row['pictureURL'] . "' alt='Picture'>";
+                    
+                    // end image css
+                    echo "</div>"; 
+
+                    // display the part description, weight, and quantity with its own css style 
                     echo "<div class=\"desc\">" . $row['description'] . "</div>";
                     echo "<div class=\"det\">" . $row['weight'] . "lbs</div>";
-                    echo "<div class=\"det\">Quantity in stock: N/A</div>";
+
+                    // execite pdo2 to grab part quantity
+                    $specPartQuan->execute([':part_number' => $row['number']]);
+                    $spQuan = $specPartQuan->fetch(PDO::FETCH_ASSOC);
+                  
+                    // display quan in stock with css style
+                    echo "<div class=\"det\">Quantity in stock: " . $spQuan['quan_in_inv'] .  "</div>";
+                    
+                    // display price with css style 
                     echo "<div class=\"price\">$" . $row['price'] . "</div>";
                     echo "<p></p>";
             
-
-                    // Form for adding to cart
+                    // Form for adding to cart; displaying with the detail css style 
                     echo "<div class=\"det\">";
                     echo "<!-- Form for adding a quantity to cart -->";
                     echo "<form method='POST' action=''>";
@@ -187,14 +210,16 @@
                     echo "</form>";
                     echo "</div>";
 
-                    echo "</div>"; // Close card
+                    echo "</div>"; // close the card div 
                 }
-            } catch (PDOException $e) {
+            } 
+            catch (PDOException $e) 
+            {
                 echo "Connection failed: " . $e->getMessage();
             }
-            ?>
-        
-        </div> <!-- Close the products div -->
-    </section>
+
+        ?>
+    </div> <!-- Close the products div -->
+</section> <!-- close section --> 
 </body>
 </html>
