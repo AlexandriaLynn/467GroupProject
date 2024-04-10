@@ -1,7 +1,9 @@
 <?php
 
+    include("secrets.php");
+
     //Opening a connection with our database server using mysqli_connect
-    $connection = mysqli_connect('courses', 'Your z-ID', 'Your Password');
+    $connection = mysqli_connect('courses', $username, $password);
     
     // Check if the connection was successful
     if(!$connection) {
@@ -10,7 +12,7 @@
     }
 
     // Selecting the database to work with using mysqli_select_db
-    $database = mysqli_select_db($connection,"Your z-ID");
+    $database = mysqli_select_db($connection, $dbname);
 
      // Check if the database selection was successful
     if(!$database) {
