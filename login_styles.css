@@ -1,0 +1,104 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #fff;
+}
+
+header {
+    background-color:#848B79;
+    color: #000000;
+    text-align: center;
+    padding: 1em 0;
+}
+
+header a {
+    color: #fff;
+    text-decoration: none;
+    margin: 0 15px;
+}
+
+.navbar {
+    background-color:#848B79;
+    overflow: hidden;
+}
+
+.navbar a {
+    float: left;
+    display: block;
+    color: white;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+}
+
+.navbar a:hover {
+    background-color: #848B79;
+    color: black;
+}
+
+.navbar .icon {
+    display: none;
+}
+
+@media screen and (max-width: 600px) {
+    .navbar a:not(:first-child) {
+        display: none;
+    }
+
+    .navbar a.icon {
+        float: right;
+        display: block;
+    }
+}
+
+@media screen and (max-width: 600px) {
+    .navbar.responsive {
+        position: relative;
+    }
+
+    .navbar.responsive .icon {
+        position: absolute;
+        right: 0;
+        top: 0;
+    }
+
+    .navbar.responsive a {
+        float: none;
+        display: block;
+        text-align: left;
+    }
+}
+
+
+main {
+    text-align: center;
+    margin-top: 50px;
+}
+
+form {
+    display: inline-block;
+    text-align: left;
+    border: 1px solid #ddd;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+form label,
+form input,
+form button {
+    display: block;
+    margin-bottom: 15px;
+}
+
+#password-status {
+    display: inline-block;
+    vertical-align: middle;
+    margin-left: 10px;
+}
+
+#password-status img {
+    width: 20px;
+    height: 20px;
+}
