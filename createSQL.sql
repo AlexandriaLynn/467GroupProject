@@ -1,9 +1,9 @@
 CREATE TABLE PAdmin(
-    admin_id varchar(5) primary key
+    admin_id INT AUTO_INCREMENT PRIMARY KEY, Email VARCHAR(75), Password VARCHAR(25), FirstName VARCHAR(50), LastName VARCHAR(50)
 );
 
 CREATE TABLE PEmployee(
-    emp_id varchar(5) primary key
+    emp_id INT AUTO_INCREMENT PRIMARY KEY, Email VARCHAR(75), Password VARCHAR(25), FirstName VARCHAR(50), LastName VARCHAR(50)
 );
 
 CREATE TABLE PInventory(
