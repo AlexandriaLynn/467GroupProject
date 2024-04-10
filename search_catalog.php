@@ -133,7 +133,7 @@
         <ul class="menu">
             <!-- Nav to go to shopping cart of product list/view catalog-->
             <li><a href='view_catalog.php'>Return to Product List</a></li>
-            <li><a>Shopping Cart</a></li>
+            <li><a href='shoppingcart.php'>Shopping Cart</a></li>
             <div class="navbar-right"><li><a href='login.php'>Employee or Admin? Log in.</a></li></div>
 
             <!--Textbox to search for part description. If a value is submitted, it takes you to a separate php file with the search results-->
@@ -204,17 +204,50 @@
                         echo "<div class=\"price\">$" . $row['price'] . "</div>";
                         echo "<p></p>";           
 
-                        // Form for adding to cart
-                        echo "<div class=\"det\">";
-                        echo "<!-- Form for adding a quantity to cart -->";
+                        //Form for adding a quantity of a certain product to cart 
                         echo "<form method='POST' action=''>";
-                        echo "<label for='add_cart'></label>";
+                        echo "<input type='hidden' name='part_number' value='" . $row['number'] . "'>";
+                        echo "<label for='add_cart'>Enter Quantity: </label>";
                         echo "<input type='text' name='add_cart' size='3'>";
                         echo "<input type='submit' value='Add to Cart'>";
                         echo "</form>";
                         echo "</div>";
+                        
+                        // check if form is not empty and ensure that form details are only being displayed on the specified part submission
+                        if (!empty($_POST["add_cart"]) && $_POST['part_number'] == $row['number']) 
+                        {
+                            $quan_select = $_POST['add_cart'];
+                        
+                            // check the quantity in inventory column 
+                            $cur_quan = (int)$spQuan['quan_in_inv'];
 
-                        echo "</div>"; // close card
+                            // if the current quantity is less than the selected quantity, display the message
+                            if ($cur_quan < $quan_select) 
+                            {
+                                echo "<div class=\"det\">Not enough in stock.</div>";
+                            }
+                            else 
+                            {
+                                echo "<div class=\"det\">Added to cart.</div>";
+                            
+                                // generate a random order number. 
+                                $order_number = '';
+                                for ($i = 0; $i < 10; $i++)
+                                {
+                                    $order_number .= rand(0, 9);
+                                }
+
+                                // insert the ordernumber generated and then default values for the other column values
+                                $def_order_insert = $pdo2->prepare("INSERT INTO POrders (order_num, date_placed, cust_name, email, order_status, shipping_addr, total_price, total_weight, cc_num, cc_exp, weight_bracket) VALUES (:order_num, '0000-00-00', 'DefaultName', 'DefaultEmail', 'In Cart', 'DefaultAddr', 0.00, 0.00, '0000000000000000', '00/00', 5)");
+                                $def_order_insert->execute([':order_num' => $order_number]);
+                            
+                                // insert into PProdInOrder the quantity of product, product id, and order number
+                                $add_to_cart = $pdo2->prepare("INSERT INTO PProdInOrder (inv_id, order_num, quan_in_order) VALUES (:part_number, :order_num, :selected_quan)");
+                                $add_to_cart->execute([':part_number' => $row['number'], ':order_num' => $order_number, ':selected_quan' => $quan_select]);
+                            }
+
+                            echo "</div>"; // close card
+                        }
                     }
 
                     // invalid search; i.e no matches
@@ -232,3 +265,11 @@
 </section> <!--close section-->
 </body>
 </html> 
+
+<!--Javascript script that prevents the enter qty form to submit again when refreshing the page-->
+<script>
+if (window.history.replaceState) 
+{
+    window.history.replaceState(null, null, window.location.href);
+}
+</script>

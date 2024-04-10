@@ -202,7 +202,8 @@
             
                     // Form for adding to cart; displaying with the detail css style 
                     echo "<div class=\"det\">";
-                    //Form for adding a quantity to cart
+
+                    //Form for adding a quantity of a certain product to cart 
                     echo "<form method='POST' action=''>";
                     echo "<input type='hidden' name='part_number' value='" . $row['number'] . "'>";
                     echo "<label for='add_cart'>Enter Quantity: </label>";
@@ -226,7 +227,22 @@
                         }
                         else 
                         {
-                            // add code for adding to database and shopping cart page. 
+                            echo "<div class=\"det\">Added to cart.</div>";
+                            
+                            // generate a random order number. 
+                            $order_number = '';
+                            for ($i = 0; $i < 10; $i++)
+                            {
+                                $order_number .= rand(0, 9);
+                            }
+
+                            // insert the ordernumber generated and then default values for the other column values
+                            $def_order_insert = $pdo2->prepare("INSERT INTO POrders (order_num, date_placed, cust_name, email, order_status, shipping_addr, total_price, total_weight, cc_num, cc_exp, weight_bracket) VALUES (:order_num, '0000-00-00', 'DefaultName', 'DefaultEmail', 'In Cart', 'DefaultAddr', 0.00, 0.00, '0000000000000000', '00/00', 5)");
+                            $def_order_insert->execute([':order_num' => $order_number]);
+                            
+                            // insert into PProdInOrder the quantity of product, product id, and order number
+                            $add_to_cart = $pdo2->prepare("INSERT INTO PProdInOrder (inv_id, order_num, quan_in_order) VALUES (:part_number, :order_num, :selected_quan)");
+                            $add_to_cart->execute([':part_number' => $row['number'], ':order_num' => $order_number, ':selected_quan' => $quan_select]);
                         }
                     }
 
@@ -243,3 +259,11 @@
 </section> <!-- close section --> 
 </body>
 </html>
+
+<!--Javascript script that prevents the enter qty form to submit again when refreshing the page-->
+<script>
+if (window.history.replaceState) 
+{
+    window.history.replaceState(null, null, window.location.href);
+}
+</script>
