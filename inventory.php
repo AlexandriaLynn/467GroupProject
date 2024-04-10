@@ -76,8 +76,8 @@
             echo "</td>";
 
             echo "<td>" . $rows['description'] . "</td>";
-            echo "<td>" . $rows['price'] . "</td>";
-            echo "<td>" . $rows['weight'] . "</td>";
+            echo "<td>$" . $rows['price'] . "</td>";
+            echo "<td>" . $rows['weight'] . "lbs</td>";
 
             //get the part quantity from inventory table in 2nd db
             $specPartQuan = $pdo2->prepare("SELECT quan_in_inv FROM PInventory WHERE inv_id = :partNumber;");
@@ -123,8 +123,8 @@
           echo "</td>";
 
           echo "<td>" . $rows['description'] . "</td>";
-          echo "<td>" . $rows['price'] . "</td>";
-          echo "<td>" . $rows['weight'] . "</td>";
+          echo "<td>$" . $rows['price'] . "</td>";
+          echo "<td>" . $rows['weight'] . " lbs</td>";
 
           //makes sure the quanitity is updated only once
           if(isset($_POST['updateQuantity']) && $changed == 0)
