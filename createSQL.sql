@@ -16,6 +16,15 @@ CREATE TABLE ShipAndHand(
    price float(6,2)
 );
 
+CREATE TABLE PCart(
+
+    cart_id int(5) primary key,
+    total_weight float(6,2) not null,
+    total_price float(8,2) not null,
+    weight_bracket int, 
+    foreign key(weight_bracket) references ShipAndHand(weight_bracket)
+);
+
 CREATE TABLE POrders(
    order_num BIGINT(10) primary key,
    date_placed date not null,
@@ -25,10 +34,17 @@ CREATE TABLE POrders(
    shipping_addr varchar(50) not null,
    total_price float(8,2) not null,
    total_weight float(6,2) not null,
-   cc_num bigint(16) not null,
-   cc_exp varchar(5) not null,
-   weight_bracket int,
-   foreign key(weight_bracket) references ShipAndHand(weight_bracket)
+   cart_id int(5),
+   foreign key(cart_id) references PCart(cart_id)
+);
+
+CREATE TABLE PProdInCart(
+    inv_id int,
+    cart_id int(5),
+    quan_in_order int,
+    primary key(inv_id, cart_id),
+    foreign key(inv_id) references PInventory(inv_id),
+    foreign key(cart_id) references PCart(cart_id)
 );
 
 CREATE TABLE PProdInOrder(

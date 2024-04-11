@@ -14,6 +14,8 @@ VALUES('E2468robot@icloud.com', 'Applerules335!', 'Robert', 'Star');
 
 INSERT INTO ShipAndHand VALUES(5, 2.74);
 
+INSERT INTO PCart (cart_id, total_price, total_weight, weight_bracket) VALUES ('12345', 0.00, 0.00, 5);
+
 INSERT INTO PInventory VALUES(1, 100);
 INSERT INTO PInventory VALUES(2, 120);
 INSERT INTO PInventory VALUES(3, 140);
