@@ -236,8 +236,9 @@
                                 $order_number .= rand(0, 9);
                             }
 
-                            // insert the ordernumber generated and then default values for the other column values
-                            $def_order_insert = $pdo2->prepare("INSERT INTO POrders (order_num, date_placed, cust_name, email, order_status, shipping_addr, total_price, total_weight, cc_num, cc_exp, weight_bracket) VALUES (:order_num, '0000-00-00', 'DefaultName', 'DefaultEmail', 'In Cart', 'DefaultAddr', 0.00, 0.00, '0000000000000000', '00/00', 5)");
+                            // insert the ordernumber generated and then default values for the other column values. the order number generated here IS NOT the order_num that will be used. 
+                            // random number generated due to order_num being a primary key and cannot have duplicate values of 0. 
+                            $def_order_insert = $pdo2->prepare("INSERT INTO POrders (order_num, date_placed, cust_name, email, order_status, shipping_addr, total_price, total_weight, weight_bracket) VALUES (:order_num, '0000-00-00', 'DefaultName', 'DefaultEmail', 'In Cart', 'DefaultAddr', 0.00, 0.00, 5)");
                             $def_order_insert->execute([':order_num' => $order_number]);
                             
                             // insert into PProdInOrder the quantity of product, product id, and order number
