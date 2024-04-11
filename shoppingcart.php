@@ -91,7 +91,7 @@
     <!-- Nav to go to shopping cart of product list/view catalog-->
         <li><a href='view_catalog.php'>Return to Product List</a></li>
         <li><a>In Cart</a></li>
-        <div class="navbar-right"><li><a href='login.php'>Employee or Admin? Log in.</a></li></div>
+        <div class="navbar-right"><li><a href='EAlogin.php'>Employee or Admin? Log in.</a></li></div>
     </ul>
     </nav>
 
@@ -110,7 +110,7 @@
                 $pdo2 = new PDO($dsn2, $username, $password);
 
                 // grab information from PProdInOrder table; contains inv id and quantity in order
-                $cart_display = "Select * FROM PProdInOrder";
+                $cart_display = "Select * FROM PProdInCart";
                 $cart_res = $pdo2->query($cart_display);
 
                 // grab the part information based on the inventory id in PProdOrder
@@ -119,14 +119,15 @@
                 echo "<center>";
                 echo "<table border=1>";
                 echo "<tr><th>Product Image</th><th>Product Name</th><th>Price of Product</th><th>Weight of Product</th><th>Qty in Cart</th><th>Change Quantity</th></tr>";
+
                 // display the information 
-                while ($row = $cart_res->fetch(PDO::FETCH_ASSOC))
+                while ($row = $cart_res->fetch(PDO::FETCH_ASSOC)) 
                 {
                     echo "<tr>";
 
                     $part_display->execute([':inv_id' => $row['inv_id']]);
 
-                    while ($part_row = $part_display->fetch(PDO::FETCH_ASSOC))
+                    while ($part_row = $part_display->fetch(PDO::FETCH_ASSOC)) 
                     {
                         echo "<td><img src='" . $part_row['pictureURL'] . "' alt='Picture'></td>";
                         echo "<td><center>" . $part_row['description'] . "</center></td>";
@@ -139,24 +140,50 @@
                     // html form for remove button
                     echo "<td>";
                     echo "<form action='' method='POST'>";
-                        echo "<label for='quantity'>0 to Remove From Cart </label>";
-                        echo"<input type ='text' name='quantity' size='3'>";
-                        echo"<input type='submit' value='Update'/>";
+                    echo "<label for='quantity'>0 to Remove From Cart </label>";
+                    echo "<input type ='hidden' name='inv_id' value='" . $row['inv_id'] . "'>"; // Hidden input for inv_id
+                    echo "<input type ='text' name='quantity' size='3'>";
+                    echo "<input type='submit' value='Update'/>";
                     echo "</form>";
                     echo "</td>";
                     echo "</tr>";
+
+                    // check if value was submitted and that its not empty 
+                    if (isset($_POST['quantity']) && $_POST['quantity'] !== '') 
+                    {
+                        $quantity = $_POST['quantity'];
+                        $inv_id = $_POST['inv_id']; 
+                        
+                        //STILL NEED TO DO ERROR CHECKING HERE TO MAKE SURE THAT THE QUANTITY ENTERED IS NOT MORE THAN WHATS IN STOCK// 
+                        // if the quantity entered is 0, remove from cart 
+                        if ($quantity == 0) 
+                        {
+                            $remove_prod = $pdo2->prepare("DELETE FROM PProdInCart WHERE inv_id = :inv_id");
+                            $remove_prod->execute([':inv_id' => $inv_id]);
+                            echo "<h3><center>Product removed from cart! Refresh to see updated cart.</h3></center>";
+                        } 
+                        else 
+                        {
+                            // else update the quantity 
+                            $update_prod = $pdo2->prepare("UPDATE PProdInCart SET quan_in_order = :quantity WHERE inv_id = :inv_id");
+                            $update_prod->execute([':quantity' => $quantity, ':inv_id' => $inv_id]);
+                            echo "<h3><center>Product quantity updated from cart! Refresh to see updated cart.</h3></center>";
+                        }
+                    }
                 }
                 echo "</table>";
                 echo "</center>";
 
                 // sql query for quantity of product 
-                $q_cart_total = "SELECT inv_id, quan_in_order FROM PProdInOrder";
+                $q_cart_total = "SELECT inv_id, quan_in_order FROM PProdInCart";
                 $q_cart_res = $pdo2->query($q_cart_total);
 
                 // sql query for grabbing product number and total price 
-                $p_cart_total = $pdo->prepare("SELECT number, price FROM parts WHERE number = :inv_id");
+                $p_cart_total = $pdo->prepare("SELECT number, price, weight FROM parts WHERE number = :inv_id");
 
                 $cart_total = 0; 
+
+                $weight_total = 0; 
 
                 // grab the values from PProdInOrder table
                 while ($row = $q_cart_res->fetch(PDO::FETCH_ASSOC))
@@ -174,9 +201,22 @@
 
                     // add to cart total 
                     $cart_total += $total_price;
+
+                    // grab and calculate total weight 
+                    $weight_of_prod = $p_prod_price['weight'];
+
+                    $total_weight = $quan_of_prod * $weight_of_prod; 
+
+                    $weight_total += $total_weight;
                 }
+
+                // setprecision; ensure cart total rounds to 2 decimal places. 
+                $cart_total = number_format($cart_total, 2);
+                $weight_total = number_format($weight_total, 2);
+
                 echo "<center>";
                 echo "<h3><center>Your shopping cart total is: $$cart_total </center></h3>";
+                echo "<h3><center>Your weight total is: $weight_total lbs</center></h3>";
             }
             catch (PDOException $e) 
             {
@@ -274,7 +314,6 @@
             
                 $context  = stream_context_create($options);
                 $result = file_get_contents($url, false, $context);
-
                     
                 // decode string from server to check if card processing went through 
                 $response = json_decode($result, true);
@@ -284,7 +323,49 @@
                 {
                     // will update this to add authorization and stuff too 
                     echo "Card verfied!";
-                    // insert values into POrders table and clear cart. 
+
+                    //insert values into POrders table and clear cart. 
+                    //generate a random order number. 
+                    $order_number = '';
+                    
+                    for ($i = 0; $i < 10; $i++)
+                    {
+                        $order_number .= rand(0, 9);
+                    }
+
+                    // get todays current date
+                    $cur_date = date('Y/m/d');
+
+                    // insert the data into the orders table. 
+                    $gen_order = $pdo2->prepare("INSERT INTO POrders (order_num, date_placed, cust_name, email, order_status, shipping_addr, total_price, total_weight, cart_id) VALUES (:order_number, :cur_date, :name, :email, 'Processing', :ship_addr, :cart_total, :weight_total, '12345')");
+                    $gen_order->execute([':order_number' => $order_number, ':cur_date' => $cur_date, ':name' => $name, ':email' => $email, ':ship_addr' => $ship_addr, ':cart_total' => $cart_total, ':weight_total' => $weight_total]);
+
+                    // grab inv_id and quantity currently in the cart 
+                    $in_cart = $pdo2->query("SELECT inv_id, quan_in_order FROM PProdInCart");
+
+                    // grab the values from cart
+                    while ($row = $in_cart->fetch(PDO::FETCH_ASSOC)) 
+                    {
+                        $inv_id = $row['inv_id'];
+                        $quan_in_order = $row['quan_in_order'];
+                                        
+                        // grab the current inventory amount for the inv_id 
+                        $cur_inv = $pdo2->prepare("SELECT quan_in_inv FROM PInventory WHERE inv_id = :inv_id");
+                        $cur_inv->execute([':inv_id' => $inv_id]);
+                        $inv_row = $cur_inv->fetch(PDO::FETCH_ASSOC);
+                        $quan_in_inv = $inv_row['quan_in_inv'];
+                                        
+                        // subtract the quantity ordered from the quantity in the inventory 
+                        $updated_inv = $quan_in_inv - $quan_in_order;
+                                        
+                        // set new inventory
+                        $inv_update = $pdo2->prepare("UPDATE PInventory SET quan_in_inv = :updated_inv WHERE inv_id = :inv_id");
+                        $inv_update->execute([':updated_inv' => $updated_inv, ':inv_id' => $inv_id]);
+                    }
+
+                    // clear cart after order is placed 
+                    $clear_cart = $pdo2->prepare("DELETE from PProdInCart where cart_id = 12345");
+                    $clear_cart->execute();
                 }
                 else 
                 {

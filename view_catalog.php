@@ -136,7 +136,7 @@
     <!-- Nav to go to shopping cart of product list/view catalog-->
         <li><a href='view_catalog.php'>Product List</a></li>
         <li><a href='shoppingcart.php'>Shopping Cart</a></li>
-        <div class="navbar-right"><li><a href='login.php'>Employee or Admin? Log in.</a></li></div>
+        <div class="navbar-right"><li><a href='EAlogin.php'>Employee or Admin? Log in.</a></li></div>
 
     <!--Textbox to search for part description. If a value is submitted, it takes you to a separate php file with the search results-->
         <div class="navbar-centered">
@@ -229,21 +229,8 @@
                         {
                             echo "<div class=\"det\">Added to cart.</div>";
                             
-                            // generate a random order number. 
-                            $order_number = '';
-                            for ($i = 0; $i < 10; $i++)
-                            {
-                                $order_number .= rand(0, 9);
-                            }
-
-                            // insert the ordernumber generated and then default values for the other column values. the order number generated here IS NOT the order_num that will be used. 
-                            // random number generated due to order_num being a primary key and cannot have duplicate values of 0. 
-                            $def_order_insert = $pdo2->prepare("INSERT INTO POrders (order_num, date_placed, cust_name, email, order_status, shipping_addr, total_price, total_weight, weight_bracket) VALUES (:order_num, '0000-00-00', 'DefaultName', 'DefaultEmail', 'In Cart', 'DefaultAddr', 0.00, 0.00, 5)");
-                            $def_order_insert->execute([':order_num' => $order_number]);
-                            
-                            // insert into PProdInOrder the quantity of product, product id, and order number
-                            $add_to_cart = $pdo2->prepare("INSERT INTO PProdInOrder (inv_id, order_num, quan_in_order) VALUES (:part_number, :order_num, :selected_quan)");
-                            $add_to_cart->execute([':part_number' => $row['number'], ':order_num' => $order_number, ':selected_quan' => $quan_select]);
+                            $add_to_cart = $pdo2->prepare("INSERT INTO PProdInCart (inv_id, cart_id, quan_in_order) VALUES (:part_number, '12345', :selected_quan)");
+                            $add_to_cart->execute([':part_number' => $row['number'], ':selected_quan' => $quan_select]);
                         }
                     }
 

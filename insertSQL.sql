@@ -1,10 +1,20 @@
-INSERT INTO PAdmin VALUES('A1234');
-INSERT INTO PAdmin VALUES('A4321');
+--> Inserting Admins
+INSERT INTO PAdmin(Email, Password, FirstName, LastName)
+VALUES('trippy@outlook.com', 'TrippyToes1!', 'Bob', 'Burgers');
 
-INSERT INTO PEmployee VALUES('E1357');
-INSERT INTO PEmployee VALUES('E2468');
+INSERT INTO PAdmin(Email, Password, FirstName, LastName)
+VALUES('mardybum@gmail.com', 'Password1234$', 'Marge', 'Simpson');
+
+--> Inserting employees
+INSERT INTO PEmployee(Email, Password, FirstName, LastName) 
+VALUES('Eternaldivine@yahoo.com', 'Specialday56!!', 'Beth', 'Smith');
+
+INSERT INTO PEmployee(Email, Password, FirstName, LastName)
+VALUES('E2468robot@icloud.com', 'Applerules335!', 'Robert', 'Star');
 
 INSERT INTO ShipAndHand VALUES(5, 2.74);
+
+INSERT INTO PCart (cart_id, total_price, total_weight, weight_bracket) VALUES ('12345', 0.00, 0.00, 5);
 
 INSERT INTO PInventory VALUES(1, 100);
 INSERT INTO PInventory VALUES(2, 120);

@@ -1,9 +1,9 @@
 CREATE TABLE PAdmin(
-    admin_id varchar(5) primary key
+    admin_id INT AUTO_INCREMENT PRIMARY KEY, Email VARCHAR(75), Password VARCHAR(25), FirstName VARCHAR(50), LastName VARCHAR(50)
 );
 
 CREATE TABLE PEmployee(
-    emp_id varchar(5) primary key
+    emp_id INT AUTO_INCREMENT PRIMARY KEY, Email VARCHAR(75), Password VARCHAR(25), FirstName VARCHAR(50), LastName VARCHAR(50)
 );
 
 CREATE TABLE PInventory(
@@ -16,6 +16,15 @@ CREATE TABLE ShipAndHand(
    price float(6,2)
 );
 
+CREATE TABLE PCart(
+
+    cart_id int(5) primary key,
+    total_weight float(6,2) not null,
+    total_price float(8,2) not null,
+    weight_bracket int, 
+    foreign key(weight_bracket) references ShipAndHand(weight_bracket)
+);
+
 CREATE TABLE POrders(
    order_num BIGINT(10) primary key,
    date_placed date not null,
@@ -25,17 +34,15 @@ CREATE TABLE POrders(
    shipping_addr varchar(50) not null,
    total_price float(8,2) not null,
    total_weight float(6,2) not null,
-   cc_num bigint(16) not null,
-   cc_exp varchar(5) not null,
-   weight_bracket int,
-   foreign key(weight_bracket) references ShipAndHand(weight_bracket)
+   cart_id int(5),
+   foreign key(cart_id) references PCart(cart_id)
 );
 
-CREATE TABLE PProdInOrder(
+CREATE TABLE PProdInCart(
     inv_id int,
-    order_num bigint(10),
+    cart_id int(5),
     quan_in_order int,
-    primary key(inv_id, order_num),
+    primary key(inv_id, cart_id),
     foreign key(inv_id) references PInventory(inv_id),
-    foreign key(order_num) references POrders(order_num)
+    foreign key(cart_id) references PCart(cart_id)
 );
