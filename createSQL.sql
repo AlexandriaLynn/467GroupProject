@@ -46,3 +46,12 @@ CREATE TABLE PProdInCart(
     foreign key(inv_id) references PInventory(inv_id),
     foreign key(cart_id) references PCart(cart_id)
 );
+
+CREATE TABLE PProdInOrder(
+    inv_id int,
+    order_num bigint(10),
+    quan_in_order int,
+    primary key(inv_id, order_num),
+    foreign key(inv_id) references PInventory(inv_id),
+    foreign key(order_num) references POrders(order_num)
+);

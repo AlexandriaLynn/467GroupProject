@@ -361,6 +361,11 @@
                         // set new inventory
                         $inv_update = $pdo2->prepare("UPDATE PInventory SET quan_in_inv = :updated_inv WHERE inv_id = :inv_id");
                         $inv_update->execute([':updated_inv' => $updated_inv, ':inv_id' => $inv_id]);
+
+                        //add the parts/quant into the PProdInOrder table
+                        $part_order = $pdo2->prepare("INSERT INTO PProdInOrder (inv_id, order_num, quan_in_order) VALUES (:inv_id, :order_number, :quan_in_order);");
+                        $part_order->execute([':inv_id' => $inv_id, ':order_number' => $order_number, ':quan_in_order' => $quan_in_order]);
+
                     }
 
                     // clear cart after order is placed 
