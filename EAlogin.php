@@ -46,7 +46,7 @@
 
             if ($num_rows > 0) {
                 // Redirect to another page on successful login
-                header("Location: 'Ship&Hand'.php");
+                header("Location: view_orders.php");
                 exit();
             }	
 	   else {
@@ -63,7 +63,7 @@
 
                 if ($num_rows > 0) {
                 // Redirect to another page on successful login
-                header("Location: 'Order_fufil'.php");
+                header("Location: fulfill_orders.php");
                 exit();
     	        }   else {
 
