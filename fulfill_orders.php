@@ -2,25 +2,6 @@
  <head>
   <title>Fulfill Orders</title>
   <style>
-
-   table
-   {
-     border-collapse: collapse;
-     width: 100%;
-   }
-
-   th, td
-   {
-     padding: 8px;
-     text-align: left;
-     border-bottom: 1px solid #ddd;
-   }
-
-   tr:nth-child(even)
-   {
-     background-color: #f2f2f2;
-   }
-
    body
    {
      font-family: Arial, sans-serif;
@@ -57,6 +38,15 @@
      color: white;
      text-align: center;
      padding: 14px 16px;
+     text-decoration: none;
+   }
+
+   .navbar c
+   {
+     float: right;
+     display: block;
+     color: white;
+     text-align: center;
      text-decoration: none;
    }
 
@@ -114,6 +104,7 @@
      <div class="navbar" id="navbar">
       <a href='fulfill_orders.php'>Fulfill Orders</a>
       <a href='inventory.php'>Update Inventory</a>
+      <c><a href='EAlogin.php'>Logout</a></c>
       <a href="javascript:void(0);" class="icon" onclick="myFunction()"> &#9776; </a>
      </div>
    </header>

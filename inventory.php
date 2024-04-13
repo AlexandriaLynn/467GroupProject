@@ -60,6 +60,15 @@
      text-decoration: none;
    }
 
+   .navbar c
+   {
+     float: right;
+     display: block;
+     color: white;
+     text-align: center;
+     text-decoration: none;
+   }
+
    .navbar a:hover
    {
      background-color: #848B79;
@@ -114,6 +123,7 @@
      <div class="navbar" id="navbar">
       <a href='fulfill_orders.php'>Fulfill Orders</a>
       <a href='inventory.php'>Update Inventory</a>
+      <c><a href='EAlogin.php'>Logout</a></c>
       <a href="javascript:void(0);" class="icon" onclick="myFunction()"> &#9776; </a>
      </div>
    </header>
