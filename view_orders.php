@@ -17,9 +17,107 @@
      border-bottom: 1px solid #ddd;
    }
 
+   body
+   {
+     font-family: Arial, sans-serif;
+     margin: 0;
+     padding: 0;
+     background-color: #fff;
+   }
+
+   header
+   {
+     background-color:#848B79;
+     color: #000000;
+     text-align: center;
+     padding: 1em 0;
+   }
+
+   header a
+   {
+     color: #fff;
+     text-decoration: none;
+     margin: 0 15px;
+   }
+
+   .navbar
+   {
+     background-color:#848B79;
+     overflow: hidden;
+   }
+
+   .navbar a
+   {
+     float: left;
+     display: block;
+     color: white;
+     text-align: center;
+     padding: 14px 16px;
+     text-decoration: none;
+   }
+
+   .navbar a:hover
+   {
+     background-color: #848B79;
+     color: black;
+   }
+
+   .navbar .icon
+   {
+     display: none;
+   }
+
+   @media screen and (max-width: 600px)
+   {
+     .navbar a:not(:first-child)
+     {
+       display: none;
+     }
+
+     .navbar a.icon
+     {
+       float: right;
+       display: block;
+     }
+   }
+
+   @media screen and (max-width: 600px)
+   {
+      .navbar.responsive
+      {
+        position: relative;
+      }
+
+     .navbar.responsive .icon
+     {
+       position: absolute;
+       right: 0;
+       top: 0;
+     }
+
+     .navbar.responsive a
+     {
+       float: none;
+       display: block;
+       text-align: left;
+     }
+   }
+
+   p
+   {
+     padding-left: 10px;
+   }
+
   </style>
  </head>
   <body>
+   <header>
+     <div class="navbar" id="navbar">
+       <a href='view_orders.php'>View Orders</a>
+       <a href='ship_and_hand.php'>Edit S&H</a>
+       <a href="javascript:void(0);" class="icon" onclick="myFunction()"> &#9776; </a>
+     </div>
+   </header>
    <?php
 
     include("secrets.php"); //this is another php, that has a $username, $password, and $dbname to connect to the db
@@ -40,10 +138,11 @@
       echo "<p>Search for an order based on:</p>";
 
       //date
-      echo "Date placed: ";
+      echo "<p>Date placed: ";
       echo "<input type='date' id='date1' name='date1' value=$defaultDate1>";
       echo " to ";
       echo "<input type='date' id='date2' name='date2' value=$defaultDate2>";
+      echo "</p>";
 
       //price
       echo "<p>Price range: ";
@@ -133,7 +232,7 @@
           //return button
           echo "<p><a href='view_orders.php'><button name='Return'>Return</button></a></p>";
 
-          echo "<h3>No orders within those parameters.</h3>";
+          echo "<h3><p>No orders within those parameters.</p></h3>";
         }
         else
         {

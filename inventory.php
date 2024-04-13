@@ -21,9 +21,103 @@
      background-color: #f2f2f2;
    }
 
+   body
+   {
+     font-family: Arial, sans-serif;
+     margin: 0;
+     padding: 0;
+     background-color: #fff;
+   }
+
+   header
+   {
+     background-color:#848B79;
+     color: #000000;
+     text-align: center;
+     padding: 1em 0;
+   }
+
+   header a
+   {
+     color: #fff;
+     text-decoration: none;
+     margin: 0 15px;
+   }
+
+   .navbar
+   {
+     background-color:#848B79;
+     overflow: hidden;
+   }
+
+   .navbar a
+   {
+     float: left;
+     display: block;
+     color: white;
+     text-align: center;
+     padding: 14px 16px;
+     text-decoration: none;
+   }
+
+   .navbar a:hover
+   {
+     background-color: #848B79;
+     color: black;
+   }
+
+   .navbar .icon
+   {
+     display: none;
+   }
+
+   @media screen and (max-width: 600px)
+   {
+     .navbar a:not(:first-child)
+     {
+       display: none;
+     }
+
+     .navbar a.icon
+     {
+       float: right;
+       display: block;
+     }
+   }
+
+   @media screen and (max-width: 600px)
+   {
+     .navbar.responsive
+     {
+       position: relative;
+     }
+
+     .navbar.responsive .icon
+     {
+       position: absolute;
+       right: 0;
+       top: 0;
+     }
+
+     .navbar.responsive a
+     {
+       float: none;
+       display: block;
+       text-align: left;
+     }
+   }
+
   </style>
  </head>
   <body>
+   <header>
+     <div class="navbar" id="navbar">
+      <a href='fulfill_orders.php'>Fulfill Orders</a>
+      <a href='inventory.php'>Update Inventory</a>
+      <a href="javascript:void(0);" class="icon" onclick="myFunction()"> &#9776; </a>
+     </div>
+   </header>
+
    <?php
 
     include("secrets.php"); //this is another php, that has a $username, $password, and $dbname to connect to the db
@@ -36,17 +130,18 @@
       $pdo2 = new PDO($dsn2, $username, $password);
 
       //search bar
+      echo "<br><center>";
       echo "<form method='POST' action=''>";
       echo "Search for a specific part: ";
       echo "<input type='text' name='partSearch'/>";
       echo "<input type='submit' name='Search' value='Search'>";
-      echo "</form>";
+      echo "</form></center>";
 
       //if there is something in the search bar, then limit the table to what was entered
       if(isset($_POST['partSearch']) && !empty($_POST['partSearch']))
       {
         //return button
-        echo "<p><a href='inventory.php'><button name='Return'>Return</button></a></p>";
+        echo "<center><p><a href='inventory.php'><button name='Return'>Return</button></a></p></center>";
 
         $partSearch = $_POST['partSearch'];
 
@@ -57,7 +152,7 @@
         //check to see if the filtered part exsists
         if ($specificPart->rowCount() == 0)
         {
-            echo "<h3>No such part exsists.</h3>";
+            echo "<center><h3>No such part exsists.</h3></center>";
         }
         else
         {
