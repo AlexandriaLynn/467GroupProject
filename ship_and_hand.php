@@ -115,14 +115,38 @@
                                                             //zid,       bday,          zid
 
     try{
-      $dsn1 = "mysql:host=blitz.cs.niu.edu;dbname=csci467";
-      $dsn2 = "mysql:host=courses;dbname=$dbname";
-      $pdo1 = new PDO($dsn1, "student", "student");
-      $pdo2 = new PDO($dsn2, $username, $password);
+        $dsn1 = "mysql:host=blitz.cs.niu.edu;dbname=csci467";
+        $dsn2 = "mysql:host=courses;dbname=$dbname";
+          $pdo1 = new PDO($dsn1, "student", "student");
+          $pdo2 = new PDO($dsn2, $username, $password);
+       // Get bracket table from Database
+        $query = "SELECT * FROM ShipAndHand";
+        $brackets = $pdo2->query($query);
+        while($row = $brackets->fetch(PDO::FETCH_ASSOC)){
+          ?> //Create forms for entering weight bracket and cost
+          <h><b>Weight brackets to calculate shipping costs: <br></b></h>
+          <form method="POST" action="">
+            <label for="weight">Weight:</label>
+            <input type="number" id="weight" name="weight"><br>
+            <label for="cost">Cost:</label>
+            <input type="text" id="cost" name="cost"><br>
+            <input type="submit" name="submit" value="Add new bracket">
+          </form>
+           <?php
+          if(isset($_POST['submit'])){
+            //Insert into table if both the weight and cost forms are filled
+            if(!empty($_POST['weight']) && !empty($_POST['cost'])){
+                $weightBracket = $_POST['weight'];
+                $bracketCost = $_POST['cost'];
+                $gen_bracket = $pdo2->prepare("INSERT INTO ShipAndHand (weight_bracket, price) VALUES (:weightBracket, :bracketCost)");
+                $gen_bracket->execute([':weightBracket' => $weightBracket, ':bracketCost' => $bracketCost]);
+            }else{
+              //Tell admin to put in weight and cost if they did not
+              echo "Please input cost and weight";
+            }
+        }
+      }
 
-      echo "this is a temp ship_and_hand.php";
-
-      //code here
 
     }
     catch(PDOexception $e) {
