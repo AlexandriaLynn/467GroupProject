@@ -149,11 +149,8 @@
         {
             max-width: 500px; 
             height: auto; 
-            margin: 50px auto; 
+            margin: 175px auto 10px;
             background: #fff;
-            border-bottom-left-radius: 5px;
-            border-bottom-right-radius: 5px;
-            border-top: 7px solid #5f6c7d; 
         }
 
         /*checkout title*/
@@ -164,7 +161,7 @@
             text-align: center;
             font-weight: 900; 
             margin-bottom: 10px; 
-            margin-top: 300px;
+            margin-top:175px;
         }
 
         /*spaces out the html inputs*/
@@ -197,7 +194,7 @@
             border-radius: 3px; 
         }
 
-        /*purchase button*/
+        /*track button*/
         .purchase
         {
             background: #5f6c7d;

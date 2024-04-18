@@ -16,6 +16,7 @@
         main 
         {
             margin: 10px; 
+            margin-top: 50px;
         }
 
         /*background of products*/
@@ -23,6 +24,7 @@
         {  
             background-color: #dfe6e9;
             padding:3em; 
+            height: 100vh; 
         }
 
         /*display product cards in a grid like format*/
@@ -192,14 +194,11 @@
     </style>
 </head>
 <body>
-    <!--Page Header-->
-    <h1>Car Parts</h1>
-
     <nav_bar>
         <div class="title">Car Parts</div>
         <ul class="headers">
             <!-- Nav to go to shopping cart of product list/view catalog-->
-            <li><a href='view_catalog.php'>Product List</a></li>
+            <li><a href='view_catalog.php'> Return to Product List</a></li>
             <li><a href='shoppingcart.php'>Shopping Cart</a></li>
             <li><a href='EAlogin.php'>Employee or Admin? Log in.</a></li>
         </ul>

@@ -16,6 +16,7 @@
         main 
         {
             margin: 10px; 
+            margin-top: 50px;
         }
 
         /*background of products*/
@@ -192,10 +193,6 @@
     </style>
 </head>
 <body>
-
-    <!--Page Header-->
-    <h1>Car Parts</h1>
-
     <nav_bar>
         <div class="title">Car Parts</div>
         <ul class="headers">
@@ -298,7 +295,7 @@
                             $add_to_cart->execute([':part_number' => $row['number'], ':selected_quan' => $quan_select]);
                         }
                     }
-                    echo "</div>"; // close display css  
+                    echo "</div>"; // close display css 
                 }         
             } 
             catch (PDOException $e) 
