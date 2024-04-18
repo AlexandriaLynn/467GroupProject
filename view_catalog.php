@@ -3,156 +3,219 @@
 <head>
     <title>Parts Catalog</title>
     <style>
-        
-        /* Product Box Formatting -- Centers in page */
-        .sec
+    
+        /*formats entire page*/
+        *
         {
-            padding: 10px 5%;
+            margin: 0px; 
+            padding: 0px; 
+            box-sizing: border-box; 
         }
 
-        /* Display the products in a grid */
-        .products
+        /*Small border around products*/
+        main 
         {
-            display: grid;
-            grid-template-columns: auto auto auto auto auto;
-        }
-        
-        /* Product Card formatting */
-        .products .card
-        {
-            width: 300px;
-            background: #f5f5f5;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
-            border-radius: 5px;
-            padding: 5px;
-            margin-bottom: 20px; 
+            margin: 10px; 
         }
 
-        /*Product image formatting */
-        .products .card img
+        /*background of products*/
+        .product-list
+        {  
+            background-color: #dfe6e9;
+            padding:3em; 
+        }
+
+        /*display product cards in a grid like format*/
+        .product-container
         {
-            height: 150px;
-            width: 80%;
+            display: grid; 
+            grid-template-columns: 1fr 1fr 1fr; 
+            grid-column-gap: 20px; 
+            grid-row-gap: 20px;
+        }
+
+        /*product cards*/
+        .product-list .display 
+        {
+            background-color: white; 
+            border-radius: 10px; 
+            padding: 1em; 
+            box-shadow: 0px 10px 5px #b2bec3; 
+            text-align: center; 
+        }
+
+        /*product name/description*/ 
+        .display .title
+        {
+            font-size: 25px; 
+            font-weight: bold; 
+        }
+
+        /*product price*/
+        .display .price
+        {
+            font-size: 20px; 
+            font-weight: bold; 
+        }
+
+        /*product picture*/
+        .display img
+        {
+            width: 30%;
             display: block; 
             margin-left: auto; 
             margin-right: auto;
         }
 
-        /*Product name/desc formatting*/
-        .products .card .desc
+        /*product description/weight/qty in stock*/ 
+        .display .text
         {
-            font-size: 25px;
-            color: black;
-            padding: 0 20px;
-            text-align: center;
-            font-weight: bold;
+            text-align: left; 
+            margin-left:2em; 
+            margin-bottom: 0.5em; 
+            font-size: 17px;
         }
 
-        /*Product Price formatting*/
-        .products .card .price
+        /*add to cart button*/ 
+        .cart-button
         {
-            color: black;
-            text-align: center;
-            font-size: 20px;
-            font-weight: bold;
+            background-color: #778ca3;
+            border:none;
+            padding: 1em; 
+            border-radius: 5px; 
+            font-weight: bold; 
+            width: 100%;
+            margin-top: 10px;
         }
 
-        /*Product detail formatting -- weight and quantity in stock*/
-        .products .card .det
+        /*hover over add to cart button*/
+        .cart-button:hover
         {
-            color: black;
-            text-align: center;
-            font-size: 20px;
-        }
-        
-        /*Page header*/
-        .products-h 
-        {
-            font-size: 50px;
-            padding: 15px 32px;
-            color: black;
-            text-align: center;
-            margin-bottom: 20px;
-        }
-         
-        /*Nav bar formatting*/
-        .navbar
-        {
-            padding: 8px 2%;
-            background-color: #f3f4f6;
-            box-shadow: 0 0 14px rgba(0,0,0,0.3);
+            box-shadow: 0px 5px 5px #b2bec3; 
+            color: white;
+            cursor: pointer; 
         }
 
-        /*Navbar menu items*/
-        .navbar .menu li
+        /*nav bar formatting*/
+        nav_bar
         {
+            width: 100%; 
+            height: 75px; 
+            background-color: #4b6584; 
+            color: #fff; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            padding: 0px 50px; 
+            position: fixed; 
+            top: 0; 
+            z-index: 1; 
+            box-shadow: 0px 10px 5px #b2bec3; 
+        }
+
+        /*Cart parts store header*/
+        .title
+        {
+            font-size: 32px; 
+            font-weight: bold; 
+        }
+
+        /* navbar header items overall*/
+        .headers
+        {
+            width: 65%; 
+            display: flex; 
+            justify-content: right;
             list-style: none;
-            display: inline-block;
         }
-        /*hover bar formatting*/
-        .navbar li a:hover 
+
+        /*menu list and link items*/ 
+        .headers li a
         {
-            background-color: #D3D3D3;
-            padding: 15px 30px;
+            margin-left: 20px; 
+            font-size: 19px; 
+            color: #fff;
+            text-decoration: none; 
+            transition: 0.3s ease; 
         }
-        /*Nav bar menu items*/
-        .navbar .menu li a
+
+        /*hover over menu items*/
+        .headers li a:hover 
         {
-            color: #424144;
-            text-decoration: none;
-            font-size: 20px;
-            font-weight: bold;
-            margin-right: 50px;
-            margin-top: 20px;
+            color: #b2bec3; 
         }
-        
-        /* Search bar centered*/
-        .navbar-centered 
+
+        /*search bar*/
+        .search_bar
         {
-            font-size: 18px;
-            font-weight: bold;
-            display: inline-block;
-            margin-left: 350px;
-            margin-top: 10px;
+            display: flex;
+            align-items: center; 
+            margin-right: 20; 
         }
-        
-        /*Employee login shifted to the right*/
-        .navbar-right 
+
+        /*search bar form html*/
+        .search_bar form
         {
-            display: inline-block;
-            float: right;
-            margin-top: 10px;
+            display: flex; 
+            margin: 0; 
+        }
+
+        /*search bar input formatting*/ 
+        .search_bar input
+        {
+            padding: 10px; 
+            border: 1px solid #ddd;
+            outline: none;
+            border-radius: 5px; 
+            margin-right: 10px; 
+            font-size: 16px; 
+        }
+
+        /*search button formatting*/ 
+        .search_bar button
+        {
+            padding: 10px; 
+            background-color: #fff;
+            border:none; 
+            border-radius: 5px; 
+            color: #333; 
+            font-size: 19px; 
+            cursor: pointer; 
+        }
+
+        /*hover over search bar*/ 
+        .search_bar button:hover
+        {
+            background-color:  #b2bec3; 
+            box-shadow: 0px 5px 5px;
         }
     </style>
 </head>
 <body>
 
     <!--Page Header-->
-    <h1 class="products-h">Car Parts</h1>
-    <nav class="navbar">
+    <h1>Car Parts</h1>
 
-    <!--navbar menu items-->
-    <ul class="menu">
-    <!-- Nav to go to shopping cart of product list/view catalog-->
-        <li><a href='view_catalog.php'>Product List</a></li>
-        <li><a href='shoppingcart.php'>Shopping Cart</a></li>
-        <div class="navbar-right"><li><a href='EAlogin.php'>Employee or Admin? Log in.</a></li></div>
-
-    <!--Textbox to search for part description. If a value is submitted, it takes you to a separate php file with the search results-->
-        <div class="navbar-centered">
-            <li>
+    <nav_bar>
+        <div class="title">Car Parts</div>
+        <ul class="headers">
+            <!-- Nav to go to shopping cart of product list/view catalog-->
+            <li><a href='tracking.php'>Track Order</a></li>
+            <li><a href='shoppingcart.php'>Shopping Cart</a></li>
+            <li><a href='EAlogin.php'>Employee or Admin? Log in.</a></li>
+        </ul>
+        
+        <!--Textbox to search for part description. If a value is submitted, it takes you to a separate php file with the search results-->
+        <div class ="search_bar">
                 <form method="POST" action="search_catalog.php">
-                    <label for="search_part" class="topnav-search">Search by Part Description</label>
-                    <input type ="text" name="search_part">
-                    <input type="submit" value="Search"/>
+                    <input type ="text"  placeholder="Search for Parts..." name="search_part">
+                    <button type="submit">Search</button>
                 </form>
-            </li>
         </div>
-    </ul>
-    </nav>
-
-<section class="sec">
-    <div class="products"> 
+    </nav_bar>
+<main> 
+<section class ="product-list">
+ <div class="product-container"> 
         <?php
 
             include("secrets.php");
@@ -175,42 +238,43 @@
                 // grab part info and display
                 while ($row = $result->fetch(PDO::FETCH_ASSOC)) 
                 {
-                    // card/grid & image formatting for products
-                    echo "<div class=\"card\">";
-                    echo "<div class=\"img\">";
+                    echo "<div class='display'>";
 
+                    echo "<div class='title'>" . $row['description'] . "</div>";
+                    echo "<p></p>";
+
+                    echo "<div class='img'>";
                     // display image
                     echo "<img src='" . $row['pictureURL'] . "' alt='Picture'>";
-                    
-                    // end image css
+
                     echo "</div>"; 
 
+                    // display price with css style
+                    echo "<p></p>"; 
+                    echo "<div class='price'>$" . $row['price'] . "</div>";
+                    echo "<p></p>";
+
                     // display the part description, weight, and quantity with its own css style 
-                    echo "<div class=\"desc\">" . $row['description'] . "</div>";
-                    echo "<div class=\"det\">" . $row['weight'] . "lbs</div>";
+                    echo "<div class='text'> Weight: " . $row['weight'] . "lbs</div>";
 
                     // execite pdo2 to grab part quantity
                     $specPartQuan->execute([':part_number' => $row['number']]);
                     $spQuan = $specPartQuan->fetch(PDO::FETCH_ASSOC);
                   
                     // display quan in stock with css style
-                    echo "<div class=\"det\">Quantity in stock: " . $spQuan['quan_in_inv'] .  "</div>";
+                    echo "<div class='text'>" . $spQuan['quan_in_inv'] . " in stock</div>";
                     
-                    // display price with css style 
-                    echo "<div class=\"price\">$" . $row['price'] . "</div>";
                     echo "<p></p>";
-            
-                    // Form for adding to cart; displaying with the detail css style 
-                    echo "<div class=\"det\">";
 
                     //Form for adding a quantity of a certain product to cart 
                     echo "<form method='POST' action=''>";
                     echo "<input type='hidden' name='part_number' value='" . $row['number'] . "'>";
                     echo "<label for='add_cart'>Enter Quantity: </label>";
                     echo "<input type='text' name='add_cart' size='3'>";
-                    echo "<input type='submit' value='Add to Cart'>";
+                    echo "<button type='submit' name='submit' class='cart-button'>";
+                    echo "Add to cart";
+                    echo "</button>";
                     echo "</form>";
-                    echo "</div>";
 
                     // check if form is not empty and ensure that form details are only being displayed on the specified part submission
                     if (!empty($_POST["add_cart"]) && $_POST['part_number'] == $row['number']) 
@@ -223,28 +287,28 @@
                         // if the current quantity is less than the selected quantity, display the message
                         if ($cur_quan < $quan_select) 
                         {
-                            echo "<div class=\"det\">Not enough in stock.</div>";
+                            echo "<p><h4>Not enough in stock.</h4></p>";
                         }
                         else 
                         {
-                            echo "<div class=\"det\">Added to cart.</div>";
+                            echo "<p><h4>Added to cart.</h4></p>";
                             
+                            // add the products to the PProdInCart table
                             $add_to_cart = $pdo2->prepare("INSERT INTO PProdInCart (inv_id, cart_id, quan_in_order) VALUES (:part_number, '12345', :selected_quan)");
                             $add_to_cart->execute([':part_number' => $row['number'], ':selected_quan' => $quan_select]);
                         }
                     }
-
-                    echo "</div>"; // close card
-                }            
+                    echo "</div>"; // close display css  
+                }         
             } 
             catch (PDOException $e) 
             {
                 echo "Connection failed: " . $e->getMessage();
             }
-
         ?>
-    </div> <!-- Close the products div -->
-</section> <!-- close section --> 
+    </div>
+</section> 
+</main>
 </body>
 </html>
 
