@@ -120,7 +120,40 @@
       $pdo1 = new PDO($dsn1, "student", "student");
       $pdo2 = new PDO($dsn2, $username, $password);
     ?>
-    <h1> Order List </h1>
+
+
+<!-- 			fulfill Order Completion at Warehouse		-->
+
+    <!-- FORM TO MARK SUCESSFUL ORDER COMPLETION -->
+    <h1> Confirm Order Fulfillment</h1>
+        <form method = "POST" action = "<?php echo $_SERVER['PHP_SELF']; ?>">
+        <label for = "ordernum"> Order Number: </label><br>
+        <input type="text" id="ordernum" name="ordernum"><br>
+	<input type = "submit" value = "MARK COMPLETE" name = "statussubmit">
+        </form>
+<?php	 //PHP code to run order status form
+         if(isset($_POST["statussubmit"]))
+         {
+           $Onumber = $_POST["ordernum"];
+           $queryS = "UPDATE POrders SET order_status = 'complete' WHERE order_num = '$Onumber'";
+	   $result = $pdo2->query($queryS);
+             if(!$result)
+             {
+                echo  "Order fufillment completed sucessfully, confirmation sent to customer email";
+             }
+             else
+             {
+                echo "Invalid order number: Unsucessful completion";
+             }
+
+         }
+?>
+
+
+
+
+<!--    			view orders w/ status			-->
+    <h2>View Order List </h2>
     <!-- FORM TO CHECK WHAT ORDER LIST TO VIEW -->
     <form method = "GET" action = "<?php echo $_SERVER['PHP_SELF']; ?>">
 
@@ -136,11 +169,11 @@
     </form>
 
     <?php
-    //PHP code to run if above form is submitted
-/*    if(isset($_GET["ordersubmit"]) && $_GET["check_orders"] != "NULL")
-        {
+    //PHP code to run view orders form if submitted
+    if(isset($_GET["ordersubmit"]) && $_GET["check_orders"] != "NULL")
+    {
         $Ostatus = $_GET["check_orders"];
-        $queryO =  $pdo1->prepare("SELECT order_num, email, order_status, total_weight FROM POrders WHERE order_status = '$Ostatus'");
+        $queryO = $pdo2->prepare("SELECT order_num, email, order_status, total_weight FROM POrders WHERE order_status = '$Ostatus'");
     ?>
     <table border = 2 style = "background-color: white;">
      <tr>
@@ -149,6 +182,7 @@
         <th> Order Status </th>
         <th> Total Weight </th>
      </tr>
+     <tr>
     <?php
      while($row = $result->fetch(PDO::FETCH_ASSOC))
          {
@@ -159,9 +193,9 @@
           <td> <?php echo $row['total_weight']; ?> </td>
             </tr>
            <?php
-        }*/?>
-    </table>
-
+         }?>
+	</table>
+<?php }  ?>
 
 <?php }
     catch(PDOexception $e) {
@@ -170,4 +204,3 @@
    ?>
   </body>
 </html>
-
