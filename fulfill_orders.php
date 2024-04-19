@@ -152,12 +152,13 @@
 
 
 
-<!--    			view orders w/ status			-->
+<!--    	  view orders w/ status to print packaging list select pending 		-->
     <h2>View Order List </h2>
     <!-- FORM TO CHECK WHAT ORDER LIST TO VIEW -->
     <form method = "GET" action = "<?php echo $_SERVER['PHP_SELF']; ?>">
 
-    <label for = "check_orders"> Select to see Orders with status: </label>
+    <label for = "check_orders"> Select to see Orders (for packaging list select pending): </label><br>
+	    
     <select name = "check_orders">
 
     <option value = "NULL"> --Select Option--- </option>
