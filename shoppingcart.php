@@ -568,7 +568,7 @@
                 $cur_date = date('Y/m/d');
 
                 // insert the data into the orders table. 
-                $gen_order = $pdo2->prepare("INSERT INTO POrders (order_num, date_placed, cust_name, email, order_status, shipping_addr, total_price, total_weight, cart_id) VALUES (:order_number, :cur_date, :name, :email, 'Processing', :ship_addr, :cart_total, :weight_total, '12345')");
+                $gen_order = $pdo2->prepare("INSERT INTO POrders (order_num, date_placed, cust_name, email, order_status, shipping_addr, total_price, total_weight, cart_id) VALUES (:order_number, :cur_date, :name, :email, 'pending', :ship_addr, :cart_total, :weight_total, '12345')");
                 $gen_order->execute([':order_number' => $order_number, ':cur_date' => $cur_date, ':name' => $name, ':email' => $email, ':ship_addr' => $ship_addr, ':cart_total' => $cart_total, ':weight_total' => $weight_total]);
 
                 // grab inv_id and quantity currently in the cart 
