@@ -190,29 +190,15 @@
             background-color:  #b2bec3; 
             box-shadow: 0px 5px 5px;
         }
+
+        h4
+        {
+            margin-top: 10px; 
+            color: SlateBlue;
+        }
     </style>
 </head>
-<body>
-    <nav_bar>
-        <div class="title">Car Parts</div>
-        <ul class="headers">
-            <!-- Nav to go to shopping cart of product list/view catalog-->
-            <li><a href='tracking.php'>Track Order</a></li>
-            <li><a href='shoppingcart.php'>Shopping Cart</a></li>
-            <li><a href='EAlogin.php'>Employee or Admin? Log in.</a></li>
-        </ul>
-        
-        <!--Textbox to search for part description. If a value is submitted, it takes you to a separate php file with the search results-->
-        <div class ="search_bar">
-                <form method="POST" action="search_catalog.php">
-                    <input type ="text"  placeholder="Search for Parts..." name="search_part">
-                    <button type="submit">Search</button>
-                </form>
-        </div>
-    </nav_bar>
-<main> 
-<section class ="product-list">
- <div class="product-container"> 
+<body> 
         <?php
 
             include("secrets.php");
@@ -225,6 +211,34 @@
                 $pdo = new PDO($dsn, 'student', 'student');
                 $pdo2 = new PDO($dsn2, $username, $password);
             
+                // sql to grab the total number of items in PProdInCart 
+                $total_cart = $pdo2->query("SELECT COUNT(*) AS cart_total FROM PProdInCart");
+                $total_cart_res = $total_cart->fetch(PDO::FETCH_ASSOC);
+                $total_cart_num = $total_cart_res['cart_total'];
+
+                echo "<nav_bar>";
+                echo "<div class='title'>Car Parts</div>";
+                echo "<ul class='headers'>";
+                    //Nav to go to shopping cart of product list/view catalog. shows total number of items in cart 
+                    echo "<li><a href='shoppingcart.php'>Shopping Cart (" . $total_cart_num . ")</a></li>";
+                    echo "<li><a href='tracking.php'>Track Order</a></li>";
+                    echo"<li><a href='EAlogin.php'>Employee or Admin? Log in.</a></li>";
+                echo "</ul>";
+                
+                //Textbox to search for part description. If a value is submitted, it takes you to a separate php file with the search results
+                echo "<div class ='search_bar'>";
+                        echo "<form method='POST' action='search_catalog.php'>";
+                            echo "<input type ='text'  placeholder='Search for Parts...' name='search_part'>";
+                            echo "<button type='submit'>Search</button>";
+                        echo "</form>";
+                echo "</div>";
+                echo "</nav_bar>";
+
+                // begin product list css 
+                echo "<main>";
+                echo "<section class ='product-list'>";
+                echo "<div class='product-container'>";
+
                 // sql to grab part details
                 $sql = "SELECT * FROM parts";
                 $result = $pdo->query($sql);
@@ -288,11 +302,24 @@
                         }
                         else 
                         {
-                            echo "<p><h4>Added to cart.</h4></p>";
-                            
-                            // add the products to the PProdInCart table
-                            $add_to_cart = $pdo2->prepare("INSERT INTO PProdInCart (inv_id, cart_id, quan_in_order) VALUES (:part_number, '12345', :selected_quan)");
-                            $add_to_cart->execute([':part_number' => $row['number'], ':selected_quan' => $quan_select]);
+                            // sql query to check if the product is already in the cart
+                            $check_cart = $pdo2->prepare("SELECT inv_id FROM PProdInCart WHERE inv_id = :part_number");
+                            $check_cart->execute([':part_number' => $row['number']]);
+                            $check_cart_res = $check_cart->fetch(PDO::FETCH_ASSOC);
+
+                            // if product is in the cart, display message, otherwise add to PProdInCart
+                            if ($check_cart_res) 
+                            {
+                                echo "<h4>Product already in cart.</h4>";
+                            }
+                            else 
+                            {
+                                echo "<h4>Added to cart.</h4>";
+
+                                // add the products to the PProdInCart table
+                                $add_to_cart = $pdo2->prepare("INSERT INTO PProdInCart (inv_id, cart_id, quan_in_order) VALUES (:part_number, '12345', :selected_quan)");
+                                $add_to_cart->execute([':part_number' => $row['number'], ':selected_quan' => $quan_select]);
+                            }
                         }
                     }
                     echo "</div>"; // close display css 
@@ -303,10 +330,10 @@
                 echo "Connection failed: " . $e->getMessage();
             }
         ?>
-    </div>
-</section> 
-</main>
-</body>
+    </div> <!--close product container div--> 
+</section> <!--close section-->
+</main> <!--close main--> 
+</body> <!--close body--> 
 </html>
 
 <!--Javascript script that prevents the enter qty form to submit again when refreshing the page-->
