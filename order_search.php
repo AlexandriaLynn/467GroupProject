@@ -1,16 +1,44 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Track Order</title>
+    <title>Order History</title>
     <style>
     
-        /*formats entire page*/
-        *
+    *
         {
             margin: 0px; 
             padding: 0px; 
             box-sizing: border-box; 
+            outline: none; 
         }
+
+        /*Table formatting*/
+        table 
+        {
+            color: black; 
+            background-color: white; 
+            border-collapse: collapse;
+            width: 80%;
+            margin-top: 80px;
+        }
+
+        table, th, td 
+        {
+            border: 2px solid #5f6c7d; 
+        }
+
+        th, td 
+        {
+            padding: 10px;
+            text-align: center;
+        }
+
+        th 
+        {
+            background-color: #5f6c7d; 
+            color: white;
+        }
+
        /*background of products*/
        .product-list
         {  
@@ -128,7 +156,7 @@
             border: 5px solid #5f6c7d; 
             display: inline-block;
             line-height: 1.5;
-            margin-left: 790px;
+            margin-left: 80px;
             font-weight: bold; 
             font-size: 20px; 
         }
@@ -144,7 +172,7 @@
             border: 5px solid #FF0000;
             display: inline-block;
             line-height: 1.5;
-            margin-left: 835px;
+            margin-left: 750px;
             font-weight: bold; 
             font-size: 20px; 
         }
@@ -216,10 +244,10 @@
 </head>
 <body>
     <nav_bar>
-        <div class="title">Track Order</div>
+        <div class="title">Order History</div>
         <ul class="headers">
             <!-- Nav to go to shopping cart of product list/view catalog-->
-            <li><a href='order_search.php'>Forgot Order Number?</a></li>
+            <li><a href='tracking.php'>Track Order</a></li>
             <li><a href='view_catalog.php'>Return to Product List</a></li>
             <li><a href='EAlogin.php'>Employee or Admin? Log in.</a></li>
         </ul>
@@ -238,14 +266,14 @@
 <form action="" method="POST">
     <div class="space">
         <div class ="checkout_box">
-            <div class="ch_header">Enter Order Number</div>
+            <div class="ch_header">Enter Email</div>
                 <div class="input-box">
                     <div class="text">
-                        <input type="text" name="order_number" size="30" placeholder="123412341234">
+                        <input type="text" name="email" size="30" placeholder="johndoe@gmail.com">
                     </div>
                 </div>   <!--close checkout_box div-->
                 <center>
-                <input type='submit' name='submit' value='Track' class="purchase">
+                <input type='submit' name='submit' value='Find' class="purchase">
                 </center>
     </div>
     </div>
@@ -261,38 +289,38 @@
         $pdo2 = new PDO($dsn2, $username, $password);
 
         // if order number form is not empty
-        if (!empty($_POST["order_number"]))
+        if (!empty($_POST["email"]))
         {
             // grab order number from form 
-            $order_number = $_POST['order_number'];
+            $select_email = $_POST['email'];
 
             // sql to grab order number from table and the status 
-            $check_order = $pdo2->prepare("SELECT order_num, order_status FROM POrders WHERE order_num = :order_number");
-            $check_order->execute([':order_number' => $order_number]);
+            $check_order = $pdo2->prepare("SELECT order_num, date_placed, total_price FROM POrders WHERE email = :select_email");
+            $check_order->execute([':select_email' => $select_email]);
 
             // if order is found in table 
             if ($check_order->rowCount() > 0) 
             {
+                echo "<center>";
+                echo "<table border=1>";
+                echo "<tr><th>Date Placed</th><th>Order Number</th><th>Total Price</th></tr>";
+    
                 // output status and order number 
                 while ($row = $check_order->fetch(PDO::FETCH_ASSOC)) 
                 {
-                    echo "<div class='found'>";
-                    echo "<p>Order Number: " . $row['order_num'] . "</p>";
-                    // change these from sql table values just for better user readability
-                    if ($row['order_status'] == 'Complete')
-                    {
-                        echo "Status: Shipped";        
-                    }
-                    else if ($row['order_status'] == 'pending')
-                    {
-                        echo "Status: Processing";                         
-                    }
-                    echo "</div>";
+                    echo "<tr>";
+                    echo "<td>" . $row['date_placed'] . "</td>";
+                    echo "<td>" . $row['order_num'] . "</td>";
+                    echo "<td> $" . $row['total_price'] . "</td>";
+                    echo "</tr>";
                 }
+
+                echo "</table>";
+                echo "</center>";
             }
             else 
             {
-                echo "<div class='not_found'>Order not found</div>";
+                echo "<div class='not_found'>No orders found with that email</div>";
             }
         }
     }
