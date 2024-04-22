@@ -129,6 +129,7 @@
         <form method = "GET" action = "<?php echo $_SERVER['PHP_SELF']; ?>">
         <label for = "ordernum"> Order Number: </label><br>
         <input type="text" id="ordernum" name="ordernum"><br>
+	<input type = "submit" value = "GET PACKAGE LIST" name = "packingsubmit">
 	<input type = "submit" value = "MARK COMPLETE" name = "statussubmit">
         </form>
 <?php	 //PHP code to run order status form
@@ -149,6 +150,32 @@
              }
 
          }
+
+	if(isset($_GET["packingsubmit"]))
+         {
+		$number = $_GET["ordernum"];
+        //Query get Order Packaging List
+           $queryP = "SELECT inv_id, quan_in_order FROM PProdInOrder WHERE order_num = '$number'";
+	   $rsult = $pdo2->query($queryP);
+?>
+	   <table border = 2 style = "background-color: white;">
+	   <tr>
+	   <th>Item ID</th>
+	   <th>Quantity</th>
+	   </tr>
+	   <tr>
+    <?php
+      		while($row = $rsult->fetch(PDO::FETCH_ASSOC))
+         	{
+     ?>
+     		   <td> <?php echo $row['inv_id']; ?> </td>
+		   <td> <?php echo $row['quan_in_order']; ?> </td>
+		</tr>
+		<?php
+         	}?>
+	   </table>
+<?php	 }
+
 ?>
 
 
@@ -159,7 +186,7 @@
    <!-- FORM TO CHECK WHAT ORDER LIST TO VIEW -->
     <form method = "GET" action = "<?php echo $_SERVER['PHP_SELF']; ?>">
 
-    <label for = "check_orders"> Select to see Orders(for packaging list select pending): </label><br>
+    <label for = "check_orders"> Select to see Orders: </label><br>
 
     <select name = "check_orders">
     <option value = "NULL"> --Select Option--- </option>
@@ -177,8 +204,9 @@
         $Ostatus = $_GET["check_orders"];
         $queryO = "SELECT order_num, email, order_status, total_weight, cart_id FROM POrders WHERE order_status = '$Ostatus'";
     	$result = $pdo2->query($queryO);
-    ?>
+
    //print table of status selected
+   ?>
     <table border = 2 style = "background-color: white;">
      <tr>
         <th> Order Number </th>
@@ -202,6 +230,7 @@
          }?>
 	</table>
 <?php }  ?>
+
 
 <?php }
     catch(PDOexception $e) {
