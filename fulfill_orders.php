@@ -136,18 +136,42 @@
          if(isset($_GET["statussubmit"]))
          {
            $Onumber = $_GET["ordernum"];
-	//Query to Update Order Status
-           $queryS = "UPDATE POrders SET order_status = 'Complete' WHERE order_num = '$Onumber'";
-	   $row = $pdo2->query($queryS); 
-	  // $row = $result->fetch(PDO::FETCH_ASSOC)
-             if($row > 0)  //if more than 1 row affected, change was sucessful
-             {
+
+           // sql query to check if order_number is in table 
+           $check_order = $pdo2->prepare("SELECT order_num, order_status FROM POrders WHERE order_num = :order_number");
+           $check_order->execute([':order_number' => $Onumber]);
+           $check_order_status = $check_order->fetch(PDO::FETCH_ASSOC); 
+
+           // if order_num is found in table 
+          if ($check_order->rowCount() > 0) 
+          {
+	          //Query to Update Order Status
+            $queryS = $pdo2->prepare("UPDATE POrders SET order_status = 'Complete' WHERE order_num = :order_number");
+            $queryS->execute([':order_number' => $Onumber]);
+
+	          // $row = $result->fetch(PDO::FETCH_ASSOC)
+            if($check_order->rowCount() > 0)  //if more than 1 row affected, change was sucessful
+            {
+              // checking if order has already been marked as complete 
+              if ($check_order_status['order_status'] == 'Complete')
+              {
+                echo "Order already completed"; 
+              } 
+              else 
+              {
+                // order was marked as pending, complete the order 
                 echo  "Order fufillment completed sucessfully, confirmation sent to customer email.";
-             }
-             else
-             {
-                echo "Invalid order number: Unsucessful completion";
-             }
+              } 
+            }
+            else 
+            {
+              echo "Error: Unsucessful completion";
+            }
+          }
+          else 
+          {
+            echo "Order number not found";
+          }
 
          }
 
