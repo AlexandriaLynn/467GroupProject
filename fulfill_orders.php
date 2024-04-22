@@ -115,10 +115,10 @@
                                                             //zid,       bday,          zid
 
     try{
-      $dsn1 = "mysql:host=blitz.cs.niu.edu;dbname=csci467";
-      $dsn2 = "mysql:host=courses;dbname=$dbname";
-      $pdo1 = new PDO($dsn1, "student", "student");
-      $pdo2 = new PDO($dsn2, $username, $password);
+	      $dsn1 = "mysql:host=blitz.cs.niu.edu;dbname=csci467";
+      	      $dsn2 = "mysql:host=courses;dbname=$dbname";
+	      $pdo1 = new PDO($dsn1, "student", "student");
+	      $pdo2 = new PDO($dsn2, $username, $password);
     ?>
 
 
@@ -126,20 +126,22 @@
 
     <!-- FORM TO MARK SUCESSFUL ORDER COMPLETION -->
     <h1> Confirm Order Fulfillment</h1>
-        <form method = "POST" action = "<?php echo $_SERVER['PHP_SELF']; ?>">
+        <form method = "GET" action = "<?php echo $_SERVER['PHP_SELF']; ?>">
         <label for = "ordernum"> Order Number: </label><br>
         <input type="text" id="ordernum" name="ordernum"><br>
 	<input type = "submit" value = "MARK COMPLETE" name = "statussubmit">
         </form>
 <?php	 //PHP code to run order status form
-         if(isset($_POST["statussubmit"]))
+         if(isset($_GET["statussubmit"]))
          {
-           $Onumber = $_POST["ordernum"];
-           $queryS = "UPDATE POrders SET order_status = 'complete' WHERE order_num = '$Onumber'";
-	   $result = $pdo2->query($queryS);
-             if(!$result)
+           $Onumber = $_GET["ordernum"];
+	//Query to Update Order Status
+           $queryS = "UPDATE POrders SET order_status = 'Complete' WHERE order_num = '$Onumber'";
+	   $row = $pdo2->query($queryS); 
+	  // $row = $result->fetch(PDO::FETCH_ASSOC)
+             if($row > 0)  //if more than 1 row affected, change was sucessful
              {
-                echo  "Order fufillment completed sucessfully, confirmation sent to customer email";
+                echo  "Order fufillment completed sucessfully, confirmation sent to customer email.";
              }
              else
              {
@@ -152,18 +154,17 @@
 
 
 
-<!--    	  view orders w/ status to print packaging list select pending 		-->
+<!--    			view orders w/ status			-->
     <h2>View Order List </h2>
-    <!-- FORM TO CHECK WHAT ORDER LIST TO VIEW -->
+   <!-- FORM TO CHECK WHAT ORDER LIST TO VIEW -->
     <form method = "GET" action = "<?php echo $_SERVER['PHP_SELF']; ?>">
 
-    <label for = "check_orders"> Select to see Orders (for packaging list select pending): </label><br>
-	    
-    <select name = "check_orders">
+    <label for = "check_orders"> Select to see Orders(for packaging list select pending): </label><br>
 
+    <select name = "check_orders">
     <option value = "NULL"> --Select Option--- </option>
-    <option value = "complete"> Sucessfully Completed </option>
-    <option value = "pending"> Pending Completion </option>
+    <option value = "Complete"> Sucessfully Completed </option>
+    <option value = "Pending"> Pending Completion </option>
     </select>
 
     <input type = "submit" value = "SUBMIT" name = "ordersubmit">
@@ -174,14 +175,17 @@
     if(isset($_GET["ordersubmit"]) && $_GET["check_orders"] != "NULL")
     {
         $Ostatus = $_GET["check_orders"];
-        $queryO = $pdo2->prepare("SELECT order_num, email, order_status, total_weight FROM POrders WHERE order_status = '$Ostatus'");
+        $queryO = "SELECT order_num, email, order_status, total_weight, cart_id FROM POrders WHERE order_status = '$Ostatus'";
+    	$result = $pdo2->query($queryO);
     ?>
+   //print table of status selected
     <table border = 2 style = "background-color: white;">
      <tr>
         <th> Order Number </th>
         <th> Email </th>
         <th> Order Status </th>
         <th> Total Weight </th>
+	<th> Cart Items ID </th>
      </tr>
      <tr>
     <?php
@@ -192,7 +196,8 @@
           <td> <?php echo $row['email']; ?> </td>
           <td> <?php echo $row['order_status']; ?> </td>
           <td> <?php echo $row['total_weight']; ?> </td>
-            </tr>
+          <td> <?php echo $row['cart_id']; ?> </td>  
+	   </tr>
            <?php
          }?>
 	</table>
