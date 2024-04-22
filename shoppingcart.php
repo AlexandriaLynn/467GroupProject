@@ -239,8 +239,8 @@
             border-radius: 10px; 
             padding: 1em; 
             text-align: center; 
-            margin-top: 100px;
-            margin-left:725px;
+            margin-top: 50px;
+//            margin-left:725px;
             border: 5px solid #5f6c7d; 
             display: inline-block;
         }
@@ -294,6 +294,7 @@
             // boolean removed and updated variables to be used in updating quantity 
             $removed = false; 
             $updated = false; 
+            $noStock = false;
 
             // grab information from PProdInOrder table; contains inv id and quantity in order
             $cart_display = "Select * FROM PProdInCart";
@@ -353,9 +354,10 @@
                     $quan_in_inv = (int)$spQuan['quan_in_inv'];
 
                     // if quantity in inventory is less than quantity selected 
-                    if ($quan_in_inv < $quantity)
+                    if ($quan_in_inv < $quantity && $noStock == false)
                     {
                         echo "<h2>Not enough in stock.</h2>";
+                        $noStock = true;
                     }
                     else if ($quantity == 0) // removing product
                     {
@@ -384,12 +386,12 @@
             // if an item was removed or updated, display the refresh cart message 
             if ($removed == true) 
             {
-                echo "<h4><center>Product removed from cart! Refresh to see updated cart.</h4></center>";
+                echo "<center><h4>Product removed from cart! Refresh to see updated cart.</h4></center>";
             }
 
             if ($updated == true)
             {
-                echo "<h4><center>Product quantity updated from cart! Refresh to see updated cart.</h4></center>";                   
+                echo "<center><h4>Product quantity updated from cart! Refresh to see updated cart.</h4></center>";
             }
 
             // sql query for quantity of product 
@@ -568,7 +570,7 @@
                 $cur_date = date('Y/m/d');
 
                 // insert the data into the orders table. 
-                $gen_order = $pdo2->prepare("INSERT INTO POrders (order_num, date_placed, cust_name, email, order_status, shipping_addr, total_price, total_weight, cart_id) VALUES (:order_number, :cur_date, :name, :email, 'pending', :ship_addr, :cart_total, :weight_total, '12345')");
+                $gen_order = $pdo2->prepare("INSERT INTO POrders (order_num, date_placed, cust_name, email, order_status, shipping_addr, total_price, total_weight, cart_id) VALUES (:order_number, :cur_date, :name, :email, 'Pending', :ship_addr, :cart_total, :weight_total, '12345')");
                 $gen_order->execute([':order_number' => $order_number, ':cur_date' => $cur_date, ':name' => $name, ':email' => $email, ':ship_addr' => $ship_addr, ':cart_total' => $cart_total, ':weight_total' => $weight_total]);
 
                 // grab inv_id and quantity currently in the cart 

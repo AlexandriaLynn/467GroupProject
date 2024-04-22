@@ -119,12 +119,86 @@
       $dsn2 = "mysql:host=courses;dbname=$dbname";
       $pdo1 = new PDO($dsn1, "student", "student");
       $pdo2 = new PDO($dsn2, $username, $password);
+    ?>
 
-      echo "this is a temp fulfill_orders.php";
 
-      //code here
+<!-- 			fulfill Order Completion at Warehouse		-->
 
-    }
+    <!-- FORM TO MARK SUCESSFUL ORDER COMPLETION -->
+    <h1> Confirm Order Fulfillment</h1>
+        <form method = "POST" action = "<?php echo $_SERVER['PHP_SELF']; ?>">
+        <label for = "ordernum"> Order Number: </label><br>
+        <input type="text" id="ordernum" name="ordernum"><br>
+	<input type = "submit" value = "MARK COMPLETE" name = "statussubmit">
+        </form>
+<?php	 //PHP code to run order status form
+         if(isset($_POST["statussubmit"]))
+         {
+           $Onumber = $_POST["ordernum"];
+           $queryS = "UPDATE POrders SET order_status = 'complete' WHERE order_num = '$Onumber'";
+	   $result = $pdo2->query($queryS);
+             if(!$result)
+             {
+                echo  "Order fufillment completed sucessfully, confirmation sent to customer email";
+             }
+             else
+             {
+                echo "Invalid order number: Unsucessful completion";
+             }
+
+         }
+?>
+
+
+
+
+<!--    	  view orders w/ status to print packaging list select pending 		-->
+    <h2>View Order List </h2>
+    <!-- FORM TO CHECK WHAT ORDER LIST TO VIEW -->
+    <form method = "GET" action = "<?php echo $_SERVER['PHP_SELF']; ?>">
+
+    <label for = "check_orders"> Select to see Orders (for packaging list select pending): </label><br>
+	    
+    <select name = "check_orders">
+
+    <option value = "NULL"> --Select Option--- </option>
+    <option value = "complete"> Sucessfully Completed </option>
+    <option value = "pending"> Pending Completion </option>
+    </select>
+
+    <input type = "submit" value = "SUBMIT" name = "ordersubmit">
+    </form>
+
+    <?php
+    //PHP code to run view orders form if submitted
+    if(isset($_GET["ordersubmit"]) && $_GET["check_orders"] != "NULL")
+    {
+        $Ostatus = $_GET["check_orders"];
+        $queryO = $pdo2->prepare("SELECT order_num, email, order_status, total_weight FROM POrders WHERE order_status = '$Ostatus'");
+    ?>
+    <table border = 2 style = "background-color: white;">
+     <tr>
+        <th> Order Number </th>
+        <th> Email </th>
+        <th> Order Status </th>
+        <th> Total Weight </th>
+     </tr>
+     <tr>
+    <?php
+     while($row = $result->fetch(PDO::FETCH_ASSOC))
+         {
+        ?>
+        <td> <?php echo $row['order_num']; ?> </td>
+          <td> <?php echo $row['email']; ?> </td>
+          <td> <?php echo $row['order_status']; ?> </td>
+          <td> <?php echo $row['total_weight']; ?> </td>
+            </tr>
+           <?php
+         }?>
+	</table>
+<?php }  ?>
+
+<?php }
     catch(PDOexception $e) {
       echo "Connection to database failed: " . $e->getMessage();
     }
