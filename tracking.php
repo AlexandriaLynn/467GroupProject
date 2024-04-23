@@ -292,7 +292,7 @@
             }
             else 
             {
-                echo "<div class='not_found'>Order not found</div>";
+                echo "<center><div class='not_found'>Order not found</div></center>";
             }
         }
     }
