@@ -128,7 +128,7 @@
             border: 5px solid #5f6c7d; 
             display: inline-block;
             line-height: 1.5;
-            margin-left: 790px;
+//            margin-left: 790px;
             font-weight: bold; 
             font-size: 20px; 
         }
@@ -144,7 +144,7 @@
             border: 5px solid #FF0000;
             display: inline-block;
             line-height: 1.5;
-            margin-left: 835px;
+//            margin-left: 835px;
             font-weight: bold; 
             font-size: 20px; 
         }
@@ -276,18 +276,18 @@
                 // output status and order number 
                 while ($row = $check_order->fetch(PDO::FETCH_ASSOC)) 
                 {
-                    echo "<div class='found'>";
+                    echo "<center><div class='found'>";
                     echo "<p>Order Number: " . $row['order_num'] . "</p>";
                     // change these from sql table values just for better user readability
                     if ($row['order_status'] == 'Complete')
                     {
                         echo "Status: Shipped";        
                     }
-                    else if ($row['order_status'] == 'pending')
+                    else if ($row['order_status'] == 'Pending')
                     {
                         echo "Status: Processing";                         
                     }
-                    echo "</div>";
+                    echo "</div></center>";
                 }
             }
             else 
