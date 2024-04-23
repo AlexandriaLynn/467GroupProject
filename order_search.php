@@ -156,7 +156,7 @@
             border: 5px solid #5f6c7d; 
             display: inline-block;
             line-height: 1.5;
-            margin-left: 80px;
+//            margin-left: 80px;
             font-weight: bold; 
             font-size: 20px; 
         }
@@ -172,7 +172,7 @@
             border: 5px solid #FF0000;
             display: inline-block;
             line-height: 1.5;
-            margin-left: 750px;
+//            margin-left: 750px;
             font-weight: bold; 
             font-size: 20px; 
         }
@@ -320,7 +320,7 @@
             }
             else 
             {
-                echo "<div class='not_found'>No orders found with that email</div>";
+                echo "<center><div class='not_found'>No orders found with that email</div></center>";
             }
         }
     }
