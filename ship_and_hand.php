@@ -99,7 +99,7 @@
 
   </style>
  </head>
-  <body>
+ <body>
    <header>
      <div class="navbar" id="navbar">
        <a href='view_orders.php'>View Orders</a>
@@ -115,38 +115,56 @@
                                                             //zid,       bday,          zid
 
     try{
-        $dsn1 = "mysql:host=blitz.cs.niu.edu;dbname=csci467";
-        $dsn2 = "mysql:host=courses;dbname=$dbname";
-          $pdo1 = new PDO($dsn1, "student", "student");
-          $pdo2 = new PDO($dsn2, $username, $password);
-       // Get bracket table from Database
-        $query = "SELECT * FROM ShipAndHand";
-        $brackets = $pdo2->query($query);
-        while($row = $brackets->fetch(PDO::FETCH_ASSOC)){
-          ?> //Create forms for entering weight bracket and cost
-          <h><b>Weight brackets to calculate shipping costs: <br></b></h>
-          <form method="POST" action="">
-            <label for="weight">Weight:</label>
-            <input type="number" id="weight" name="weight"><br>
-            <label for="cost">Cost:</label>
-            <input type="text" id="cost" name="cost"><br>
-            <input type="submit" name="submit" value="Add new bracket">
-          </form>
-           <?php
-          if(isset($_POST['submit'])){
-            //Insert into table if both the weight and cost forms are filled
+      $dsn1 = "mysql:host=blitz.cs.niu.edu;dbname=csci467";
+      $dsn2 = "mysql:host=courses;dbname=$dbname";
+      $pdo1 = new PDO($dsn1, "student", "student");
+      $pdo2 = new PDO($dsn2, $username, $password);
+
+      $query =  "SELECT * FROM ShipAndHand";
+      if($result = $pdo2->query($query)){
+         ?>
+         <h><b>Weight brackets to calculate shipping costs: <br></b></h>
+         <?php
+         while($row = $result->fetch(PDO::FETCH_ASSOC)){
+            $removeBracket = $pdo2->prepare("DELETE FROM ShipAndHand (weight_bracket, price) VALUES (:curWeight,:price");
+            $curWeight = $row["weight_bracket"];
+            $price = $row["price"];
+
+            echo "<center>";
+            echo "<tr>";
+            echo     "<td class=weight>".$curWeight."</td>";
+            echo     "<td class=price>".$price."</td>";
+            echo "</tr>";
+            echo "</center>";
+            ?>
+            <form method = "POST" action="">
+               <input type="submit" name="remove" value="Remove">
+            </form>
+            <?php
+            if(isset($_POST['submit'])){
+              $removeBracket->execute(['weightBracket' => $curWeight, ':price' => $price]);
+            }
+         }
+      }
+        ?>
+        <form method="POST" action="">
+           <label for="weight">Weight:</label>
+           <input type="number" id="weight" name="weight"><br>
+           <label for="cost">Cost:</label>
+           <input type="text" id="cost" name="cost"><br>
+           <input type="submit" name="submit" value="Add new bracket">
+        </form>
+        <?php
+        if(isset($_POST['submit'])){
             if(!empty($_POST['weight']) && !empty($_POST['cost'])){
                 $weightBracket = $_POST['weight'];
                 $bracketCost = $_POST['cost'];
                 $gen_bracket = $pdo2->prepare("INSERT INTO ShipAndHand (weight_bracket, price) VALUES (:weightBracket, :bracketCost)");
                 $gen_bracket->execute([':weightBracket' => $weightBracket, ':bracketCost' => $bracketCost]);
             }else{
-              //Tell admin to put in weight and cost if they did not
-              echo "Please input cost and weight";
+                echo "Please input cost and weight";
             }
         }
-      }
-
 
     }
     catch(PDOexception $e) {
