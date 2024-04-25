@@ -126,25 +126,20 @@
          <h><b>Weight brackets to calculate shipping costs: <br></b></h>
          <?php
          while($row = $result->fetch(PDO::FETCH_ASSOC)){
-            $removeBracket = $pdo2->prepare("DELETE FROM ShipAndHand (weight_bracket, price) VALUES (:curWeight,:price");
             $curWeight = $row["weight_bracket"];
             $price = $row["price"];
 
-            echo "<center>";
-            echo "<tr>";
-            echo     "<td class=weight>".$curWeight."</td>";
-            echo     "<td class=price>".$price."</td>";
-            echo "</tr>";
-            echo "</center>";
+            echo $curWeight." $".$price;
             ?>
             <form method = "POST" action="">
                <input type="submit" name="remove" value="Remove">
             </form>
             <?php
-            if(isset($_POST['submit'])){
-              $removeBracket->execute(['weightBracket' => $curWeight, ':price' => $price]);
-            }
          }
+        if(isset($_POST['submit'])){
+          $removeBracket = $pdo2->prepare("DELETE FROM ShipAndHand WHERE weight_bracket = :weightBracket")
+          $removeBracket->execute(['weightBracket' => $curWeight]);
+        }
       }
         ?>
         <form method="POST" action="">
