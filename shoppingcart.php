@@ -579,7 +579,7 @@
                 'cc' => $cc_num,
                 'name' => $name,
                 'exp' => $cc_exp,
-                'amount' => $cart_total);
+                'amount' => number_format($cart_total,2));
 
             $options = array(
                 'http' => array(
