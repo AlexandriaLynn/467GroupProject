@@ -220,6 +220,13 @@
             display: inline-block;
         }
 
+        /*total cost formatting*/ 
+        h3 .total-cost
+        {
+            font-size: 25px; 
+            margin-top: 7px; 
+        }   
+
         /*not enough in stock formatting*/ 
         h2
         {
@@ -240,7 +247,6 @@
             padding: 1em; 
             text-align: center; 
             margin-top: 50px;
-//            margin-left:725px;
             border: 5px solid #5f6c7d; 
             display: inline-block;
         }
@@ -312,7 +318,7 @@
 
             echo "<center>";
             echo "<table border=1>";
-            echo "<tr><th>Product Image</th><th>Product Name</th><th>Price of Product</th><th>Weight of Product</th><th>Qty in Cart</th><th>Change Quantity</th></tr>";
+            echo "<tr><th></th><th>Name</th><th>Price</th><th>Weight</th><th>Qty in Cart</th><th>Change Quantity</th></tr>";
 
             // display the products in cart
             while ($row = $cart_res->fetch(PDO::FETCH_ASSOC)) 
@@ -432,6 +438,28 @@
             $cart_total = number_format($cart_total, 2);
             $weight_total = number_format($weight_total, 2);
 
+            // shipping cost var
+            $shipping = 0; 
+
+            // sql query to grab weight_bracket for total weight
+            $sql_weight = "SELECT * FROM ShipAndHand WHERE weight_bracket <= :total_weight ORDER BY weight_bracket DESC";
+            $weight_res = $pdo2->prepare($sql_weight);
+            $weight_res->execute([':total_weight' => $weight_total]);
+            $weight_brack = $weight_res->fetch(PDO::FETCH_ASSOC);
+
+            // if results returned, set the shipping cost to the weight bracket price
+            if ($weight_brack)
+            {
+                $shipping = $weight_brack['price'];
+            }
+
+            // add the shipping cost to the total cart price 
+            $total_cart = $cart_total + $shipping; 
+
+            // two decimal places for shipping 
+            $shipping = number_format($shipping, 2);
+
+            // empty cart
             if ($cart_total == 0)
             {
                 echo "<center>";
@@ -445,7 +473,18 @@
                 echo "<center>";
                 echo "<h3>";
                 echo "<center>Cart Total: $$cart_total </center>";
+
+                if ($shipping == 0)
+                {
+                    echo "<center>Shipping: Free </center>";
+                }
+                else 
+                {
+                    echo "<center>Shipping: $$shipping </center>";
+                }
+                
                 echo "<center>Weight Total: $weight_total lbs</center>";
+                echo "<center class='total-cost'>Total Price: $$total_cart </center>";
                 echo "</h3>";
                 echo "</center>";  
             }              
