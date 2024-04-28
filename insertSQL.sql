@@ -12,9 +12,10 @@ VALUES('Eternaldivine@yahoo.com', 'Specialday56!!', 'Beth', 'Smith');
 INSERT INTO PEmployee(Email, Password, FirstName, LastName)
 VALUES('E2468robot@icloud.com', 'Applerules335!', 'Robert', 'Star');
 
+INSERT INTO ShipAndHand VALUES(0, 1.26);
 INSERT INTO ShipAndHand VALUES(5, 2.74);
 
-INSERT INTO PCart (cart_id, total_price, total_weight, weight_bracket) VALUES ('12345', 0.00, 0.00, 5);
+INSERT INTO PCart (cart_id, total_price, total_weight, weight_bracket) VALUES ('12345', 0.00, 0.00, 0);
 
 INSERT INTO PInventory VALUES(1, 100);
 INSERT INTO PInventory VALUES(2, 120);

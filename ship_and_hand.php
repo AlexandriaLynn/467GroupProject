@@ -122,30 +122,32 @@
 
       $query =  "SELECT * FROM ShipAndHand";
       if($result = $pdo2->query($query)){
-         ?>
-         <h><b>Weight brackets to calculate shipping costs: <br></b></h>
-         <?php
-         while($row = $result->fetch(PDO::FETCH_ASSOC)){
-          $curWeight = $row["weight_bracket"];
-          $query2 = "SELECT * FROM ShipAndHand WHERE weight_bracket > $curWeight";
-          $resultWeight = $pdo2->query($query2);
-          $nextWeight = $resultWeight->fetch(PDO::FETCH_ASSOC);
-          $price = $row["price"];
-          if($nextWeight["weight_bracket"] != 0){
-              echo "From ".$curWeight." to ".$nextWeight["weight_bracket"]." lbs "." $".$price;
-          }else{
-              echo "Over ".$curWeight." $".$price;
-          }
           ?>
-          <form method = "POST" action="">
-             <input type="submit" name="remove" value="Remove">
-          </form>
+          <h><b>Weight brackets to calculate shipping costs: <br></b></h>
           <?php
-       }
-       if(isset($_POST['remove'])){
-           $removeBracket = $pdo2->prepare("DELETE FROM ShipAndHand WHERE weight_bracket = :weightBracket");
-           $removeBracket->execute([':weightBracket' => $curWeight]);
-       }
+           while($row = $result->fetch(PDO::FETCH_ASSOC)){
+               $curWeight = $row["weight_bracket"];
+               $query2 = "SELECT * FROM ShipAndHand WHERE weight_bracket > $curWeight";
+               $resultWeight = $pdo2->query($query2);
+               $nextWeight = $resultWeight->fetch(PDO::FETCH_ASSOC);
+               $price = $row["price"];
+               if($nextWeight["weight_bracket"] != 0){
+                   echo "From ".$curWeight." to ".$nextWeight["weight_bracket"]." lbs "." $".$price;
+               }else{
+                   echo "Over ".$curWeight." $".$price;
+               }
+               ?>
+               <form method = "POST" action="">
+                  <input type="hidden" name="rmWeight" value="<?php echo $row['weight_bracket']; ?>">
+                  <input type="submit" name="remove" value="Remove">
+               </form>
+               <?php
+            }
+          if(isset($_POST['remove'])){
+              $removeBracket = $pdo2->prepare("DELETE FROM ShipAndHand WHERE weight_bracket = :weightBracket");
+              $removeBracket->execute([':weightBracket' => $_POST["rmWeight"]]);
+              header('Location: '.$_SERVER['PHP_SELF']);
+          }
       }
         ?>
         <form method="POST" action="">

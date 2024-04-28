@@ -435,8 +435,8 @@
             }
 
             // setprecision; ensure cart total rounds to 2 decimal places. 
-            $cart_total = number_format($cart_total, 2);
-            $weight_total = number_format($weight_total, 2);
+//            $cart_total = number_format($cart_total, 2);
+//            $weight_total = number_format($weight_total, 2);
 
             // shipping cost var
             $shipping = 0; 
@@ -457,7 +457,8 @@
             $total_cart = $cart_total + $shipping; 
 
             // two decimal places for shipping 
-            $shipping = number_format($shipping, 2);
+//            $shipping = number_format($shipping, 2);
+
 
             // empty cart
             if ($cart_total == 0)
@@ -472,7 +473,7 @@
             {
                 echo "<center>";
                 echo "<h3>";
-                echo "<center>Cart Total: $$cart_total </center>";
+                echo "<center>Cart Total: \$", number_format($cart_total,2), "</center>";
 
                 if ($shipping == 0)
                 {
@@ -480,11 +481,11 @@
                 }
                 else 
                 {
-                    echo "<center>Shipping: $$shipping </center>";
+                    echo "<center>Shipping: \$", number_format($shipping,2), "</center>";
                 }
                 
-                echo "<center>Weight Total: $weight_total lbs</center>";
-                echo "<center class='total-cost'>Total Price: $$total_cart </center>";
+                echo "<center>Weight Total: ", number_format($weight_total,2), " lbs</center>";
+                echo "<center class='total-cost'>Total Price: \$", number_format($total_cart,2), "</center>";
                 echo "</h3>";
                 echo "</center>";  
             }              
