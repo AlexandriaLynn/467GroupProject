@@ -96,10 +96,41 @@
        text-align: left;
      }
    }
+    table {
+ 	   border-collapse: collapse;
+	   padding: 15px;
+	   text-align: center;
+	  }
+    .content{
+	max-width: auto;
+   	margin: auto;
+    form{
+  	text-align: center;
+      }
+    .center {
+  	margin-left: auto;
+    	margin-right: auto;
+     } 
+    h1 {text-align: center;}
+    h2 {text-align: center;}
 
+    .my-button {
+  	display: block;
+  	margin: auto;
+       }
+   }
   </style>
+<style media="print">
+  .noPrint{ display: none; }
+  .yPrint{ display: block !important; }
+  
+  @media only print {table}
+
+</style>
+<!--         	start of body 			--> 
  </head>
   <body>
+<div class="content"
    <header>
      <div class="navbar" id="navbar">
       <a href='fulfill_orders.php'>Fulfill Orders</a>
@@ -125,13 +156,15 @@
 <!-- 			fulfill Order Completion at Warehouse		-->
 
     <!-- FORM TO MARK SUCESSFUL ORDER COMPLETION -->
-    <h1> Confirm Order Fulfillment</h1>
+    <h1 style="background-color:#DAF7A6;"> Confirm Order Fulfillment</h1>
         <form method = "GET" action = "<?php echo $_SERVER['PHP_SELF']; ?>">
         <label for = "ordernum"> Order Number: </label><br>
         <input type="text" id="ordernum" name="ordernum"><br>
 	<input type = "submit" value = "GET PACKAGE LIST" name = "packingsubmit">
 	<input type = "submit" value = "MARK COMPLETE" name = "statussubmit">
         </form>
+
+<!--                    PHP code to run when MARK COMPLETE button clicked           -->
 <?php	 //PHP code to run order status form
          if(isset($_GET["statussubmit"]))
          {
@@ -155,41 +188,47 @@
               // checking if order has already been marked as complete 
               if ($check_order_status['order_status'] == 'Complete')
               {
-                echo "Order already completed"; 
+                echo "*Order already completed"; 
               } 
               else 
               {
                 // order was marked as pending, complete the order 
-                echo  "Order fufillment completed sucessfully, confirmation sent to customer email.";
+                echo  "*Order fufillment completed sucessfully, confirmation sent to customer email.";
               } 
             }
             else 
             {
-              echo "Error: Unsucessful completion";
+              echo "*Error: Unsucessful completion";
             }
           }
           else 
           {
-            echo "Order number not found";
+            echo "*Order number '$Onumber' not found";
           }
 
          }
-
-	if(isset($_GET["packingsubmit"]))
-         {
-		$number = $_GET["ordernum"];
-        //Query get Order Packaging List
-           $queryP = "SELECT inv_id, quan_in_order FROM PProdInOrder WHERE order_num = '$number'";
-	   $rsult = $pdo2->query($queryP);
 ?>
-	   <table border = 2 style = "background-color: white;">
+<!--                    PHP code to run when GET PACKAGE LIST button clicked           -->
+<?php
+	if(isset($_GET["packingsubmit"]))
+          {
+		$number = $_GET["ordernum"];
+           //Query get Order Packaging List
+	   $pack_list = $pdo2->prepare("SELECT inv_id, quan_in_order FROM PProdInOrder WHERE order_num = :order_num");
+	   $pack_list->execute([':order_num' => $number]);
+	 //  $status = $pack_list->fetch(PDO::FETCH_ASSOC);
+	   // if order number is found in table 
+           if($pack_list->rowCount() > 0)
+           {?>
+	   <div class = "yPrint">
+	   <table border = 2 style = "background-color: white;" class="center">
 	   <tr>
 	   <th>Item ID</th>
 	   <th>Quantity</th>
 	   </tr>
 	   <tr>
     <?php
-      		while($row = $rsult->fetch(PDO::FETCH_ASSOC))
+      		while($row = $pack_list->fetch(PDO::FETCH_ASSOC))
          	{
      ?>
      		   <td> <?php echo $row['inv_id']; ?> </td>
@@ -198,7 +237,15 @@
 		<?php
          	}?>
 	   </table>
-<?php	 }
+	   <input TYPE="button" value= "Print" onClick="window.print()" class="my-button">
+	   </div>
+<?php
+	  }
+	  else 
+          {
+            echo "*No packing list found for order number entered : '$number'";
+          }
+	 }
 
 ?>
 
@@ -206,7 +253,9 @@
 
 
 <!--    			view orders w/ status			-->
-    <h2>View Order List </h2>
+
+   <br><br>
+   <h2 style="background-color:#DAF7A6;">View Order List </h2>
    <!-- FORM TO CHECK WHAT ORDER LIST TO VIEW -->
     <form method = "GET" action = "<?php echo $_SERVER['PHP_SELF']; ?>">
 
@@ -226,18 +275,17 @@
     if(isset($_GET["ordersubmit"]) && $_GET["check_orders"] != "NULL")
     {
         $Ostatus = $_GET["check_orders"];
-        $queryO = "SELECT order_num, email, order_status, total_weight, cart_id FROM POrders WHERE order_status = '$Ostatus'";
+        $queryO = "SELECT order_num, email, order_status, total_weight FROM POrders WHERE order_status = '$Ostatus'";
     	$result = $pdo2->query($queryO);
 
    //print table of status selected
    ?>
-    <table border = 2 style = "background-color: white;">
+    <table border = 2 style = "background-color: white;" class="center">
      <tr>
         <th> Order Number </th>
         <th> Email </th>
         <th> Order Status </th>
         <th> Total Weight </th>
-	<th> Cart Items ID </th>
      </tr>
      <tr>
     <?php
@@ -248,7 +296,6 @@
           <td> <?php echo $row['email']; ?> </td>
           <td> <?php echo $row['order_status']; ?> </td>
           <td> <?php echo $row['total_weight']; ?> </td>
-          <td> <?php echo $row['cart_id']; ?> </td>  
 	   </tr>
            <?php
          }?>
@@ -261,5 +308,6 @@
       echo "Connection to database failed: " . $e->getMessage();
     }
    ?>
+  </div>
   </body>
 </html>
