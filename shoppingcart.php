@@ -536,7 +536,7 @@
     <!--PHP Code for credit card autorization based on inputted values above--> 
     <?php 
 
-        echo "REMOVE THIS LINE!!! For testing purposes: Credit cart to use: 6011 1234 4321 1234 and expiration date: 12/2024";
+//        echo "REMOVE THIS LINE!!! For testing purposes: Credit cart to use: 6011 1234 4321 1234 and expiration date: 12/2024";
         // if the html form is submitted
         if (isset($_POST['submit']))
         {
